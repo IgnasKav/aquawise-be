@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdvertisementsModule } from './advertisements/advertisementsModule';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import * as Joi from '@hapi/joi';
@@ -19,6 +19,7 @@ import * as Joi from '@hapi/joi';
         ELASTICSEARCH_PASSWORD: Joi.required(),
         ELASTICSEARCH_USERNAME: Joi.required(),
         ELASTICSEARCH_NODE: Joi.required(),
+        JWT_SECRET: Joi.required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -32,8 +33,8 @@ import * as Joi from '@hapi/joi';
       synchronize: true, // in production should be false
     }),
     AdvertisementsModule,
-    UserModule,
     AuthModule,
+    UsersModule,
     SearchModule,
   ],
   controllers: [],

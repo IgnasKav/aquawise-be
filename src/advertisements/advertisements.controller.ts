@@ -14,9 +14,9 @@ import { SearchRequestDto } from './dto/searchRequest.dto';
 import { AddToWatchLaterRequestDto } from './dto/addToWatchLaterRequest.dto';
 import { AdvertisementCreateRequestDto } from './dto/advertisementCreateRequest.dto';
 import { AdvertisementUpdateRequestDto } from './dto/advertisementUpdateRequest.dto';
-import { AuthenticatedGuard } from '../auth/authenticated.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(AuthenticatedGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('advertisements')
 export class AdvertisementsController {
   constructor(private readonly advertisementsService: AdvertisementsService) {}

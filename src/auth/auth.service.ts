@@ -1,26 +1,39 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../user/users.service';
 import { compare } from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
+import { UserEntity } from '../user/entities/user.entity';
+import { RegisterRequestDto } from './dto/registerRequest.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.getUser(email);
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<UserEntity | null> {
+    const user = await this.usersService.getUser(email);
     const passwordValid = await compare(password, user.password);
 
-    if (!user) {
-      throw new NotAcceptableException('could not find user');
+    if (!user || !passwordValid) {
+      return null;
     }
+    return user;
+  }
 
-    if (user && passwordValid) {
-      return {
-        userId: user.id,
-        email: user.email,
-      };
-    }
+  async login(user: UserEntity): Promise<any> {
+    const payload = { username: user.email, sub: user.id };
 
-    return null;
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async register(request: RegisterRequestDto) {
+    return await this.usersService.saveUser(request);
   }
 }

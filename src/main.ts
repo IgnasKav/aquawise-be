@@ -8,15 +8,6 @@ import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   app.useGlobalPipes(
     new ValidationPipe({
