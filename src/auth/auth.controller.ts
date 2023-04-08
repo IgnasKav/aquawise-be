@@ -10,12 +10,16 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/registerRequest.dto';
+import { MailService } from '../mail/mail.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private mailService: MailService,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
@@ -34,5 +38,11 @@ export class AuthController {
   @Post('register')
   register(@Body() request: RegisterRequestDto) {
     return this.authService.register(request);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('test-mail')
+  testMail(@Request() request) {
+    this.mailService.sendUserConfirmation(request.user, 'token');
   }
 }

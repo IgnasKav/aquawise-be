@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   db:
@@ -29,6 +29,12 @@ services:
       - es-net
     ports:
       - "9200:9200"
+  mails:
+    container_name: mails
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
   kibana:
     container_name: kibana-container
     image: docker.elastic.co/kibana/kibana:8.3.1

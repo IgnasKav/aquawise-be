@@ -17,9 +17,14 @@ export class AuthService {
     password: string,
   ): Promise<UserEntity | null> {
     const user = await this.usersService.getUser(email);
+
+    if (!user) {
+      return null;
+    }
+
     const passwordValid = await compare(password, user.password);
 
-    if (!user || !passwordValid) {
+    if (!passwordValid) {
       return null;
     }
     return user;

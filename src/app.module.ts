@@ -5,11 +5,13 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
+import { MailModule } from './mail/mail.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       validationSchema: Joi.object({
         DATABASE_HOST: Joi.required(),
         DATABASE_PORT: Joi.number().required(),
@@ -20,6 +22,9 @@ import * as Joi from '@hapi/joi';
         ELASTICSEARCH_USERNAME: Joi.required(),
         ELASTICSEARCH_NODE: Joi.required(),
         JWT_SECRET: Joi.required(),
+        MAIL_HOST: Joi.required(),
+        MAIL_USER: Joi.required(),
+        MAIL_PORT: Joi.required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -36,6 +41,7 @@ import * as Joi from '@hapi/joi';
     AuthModule,
     UsersModule,
     SearchModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
