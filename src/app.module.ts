@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { MailModule } from './mail/mail.module';
 import * as Joi from '@hapi/joi';
+import { dataSourceOptions } from '../database/data-source';
 
 @Module({
   imports: [
@@ -27,16 +28,7 @@ import * as Joi from '@hapi/joi';
         MAIL_PORT: Joi.required(),
       }),
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: +process.env.DATABASE_PORT,
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      autoLoadEntities: true,
-      synchronize: true, // in production should be false
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     AdvertisementsModule,
     AuthModule,
     UsersModule,
