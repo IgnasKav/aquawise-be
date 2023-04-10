@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
-import * as session from 'express-session';
-import * as passport from 'passport';
+import { config } from 'dotenv';
 
 async function bootstrap() {
+  config();
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(

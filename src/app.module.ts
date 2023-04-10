@@ -12,7 +12,6 @@ import { dataSourceOptions } from '../database/data-source';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
       validationSchema: Joi.object({
         DATABASE_HOST: Joi.required(),
         DATABASE_PORT: Joi.number().required(),
@@ -25,7 +24,7 @@ import { dataSourceOptions } from '../database/data-source';
         JWT_SECRET: Joi.required(),
         MAIL_HOST: Joi.required(),
         MAIL_USER: Joi.required(),
-        MAIL_PORT: Joi.required(),
+        MAIL_PORT: Joi.number().required(),
       }),
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
