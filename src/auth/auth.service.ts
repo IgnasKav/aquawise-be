@@ -1,22 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../user/users.service';
 import { compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '../user/entities/user.entity';
 import { RegisterRequestDto } from './dto/registerRequest.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async validateUser(
     email: string,
     password: string,
   ): Promise<UserEntity | null> {
-    const user = await this.usersService.getUser(email);
+    const user = await this.usersService.findByEmail(email);
 
     if (!user) {
       return null;
@@ -31,6 +37,9 @@ export class AuthService {
   }
 
   async login(user: UserEntity): Promise<any> {
+    if (!user.isEmailConfirmed) {
+      throw new UnauthorizedException('Please confirm your email');
+    }
     const payload = { username: user.email, sub: user.id };
 
     return {
@@ -39,6 +48,14 @@ export class AuthService {
   }
 
   async register(request: RegisterRequestDto) {
-    return await this.usersService.saveUser(request);
+    const newUser = await this.usersService.register(request);
+    await this.mailService.sendUserConfirmation(newUser);
+    return newUser;
+  }
+
+  async confirmRegistration(registrationId: string) {
+    const user = await this.usersService.findByRegistrationId(registrationId);
+    user.isEmailConfirmed = true;
+    await this.usersService.saveUser(user);
   }
 }

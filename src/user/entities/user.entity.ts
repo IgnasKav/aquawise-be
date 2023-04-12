@@ -18,4 +18,12 @@ export class UserEntity {
 
   @Column()
   password: string;
+
+  @Column({
+    unique: true,
+  })
+  registrationId: string;
+
+  @Column()
+  isEmailConfirmed: boolean;
 }
