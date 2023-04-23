@@ -1,14 +1,14 @@
 import {
   Injectable,
-  NotAcceptableException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../user/users.service';
 import { compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { UserEntity } from '../user/entities/user.entity';
 import { RegisterRequestDto } from './dto/registerRequest.dto';
 import { MailService } from '../mail/mail.service';
+import { LoginRequestDto } from './dto/LoginRequest.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,28 +18,24 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<UserEntity | null> {
+  async login(loginRequest: LoginRequestDto): Promise<any> {
+    const { email, password } = loginRequest;
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      return null;
+      throw new NotFoundException('email or password is incorrect');
+    }
+
+    if (!user.isEmailConfirmed) {
+      throw new UnauthorizedException('Please confirm your email');
     }
 
     const passwordValid = await compare(password, user.password);
 
     if (!passwordValid) {
-      return null;
+      throw new NotFoundException('email or password is incorrect');
     }
-    return user;
-  }
 
-  async login(user: UserEntity): Promise<any> {
-    if (!user.isEmailConfirmed) {
-      throw new UnauthorizedException('Please confirm your email');
-    }
     const payload = { username: user.email, sub: user.id };
 
     return {
