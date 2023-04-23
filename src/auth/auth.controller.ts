@@ -21,23 +21,23 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Request() request) {
+  login(@Request() request) {
     return this.authService.login(request.user);
+  }
+
+  @Post('register')
+  async register(@Body() request: RegisterRequestDto) {
+    await this.authService.register(request);
+  }
+
+  @Get('confirm/:registrationId')
+  async confirmRegistration(@Param('registrationId') registrationId: string) {
+    await this.authService.confirmRegistration(registrationId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
-  }
-
-  @Post('register')
-  register(@Body() request: RegisterRequestDto) {
-    return this.authService.register(request);
-  }
-
-  @Get('confirm/:registrationId')
-  confirmRegistration(@Param('registrationId') registrationId: string) {
-    this.authService.confirmRegistration(registrationId);
   }
 }

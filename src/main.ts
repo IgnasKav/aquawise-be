@@ -3,10 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
-import { config } from 'dotenv';
 
 async function bootstrap() {
-  config();
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
@@ -19,6 +17,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TimeoutInterceptor());
-  await app.listen(5001);
+  await app.listen(process.env.BE_PORT);
 }
 bootstrap();

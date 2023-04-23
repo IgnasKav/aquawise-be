@@ -43,14 +43,13 @@ export class AuthService {
     const payload = { username: user.email, sub: user.id };
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      jwt: await this.jwtService.signAsync(payload),
     };
   }
 
   async register(request: RegisterRequestDto) {
     const newUser = await this.usersService.register(request);
     await this.mailService.sendUserConfirmation(newUser);
-    return newUser;
   }
 
   async confirmRegistration(registrationId: string) {

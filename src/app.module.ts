@@ -12,6 +12,7 @@ import { dataSourceOptions } from '../database/data-source';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`,
       validationSchema: Joi.object({
         DATABASE_HOST: Joi.required(),
         DATABASE_PORT: Joi.number().required(),
@@ -25,6 +26,8 @@ import { dataSourceOptions } from '../database/data-source';
         MAIL_HOST: Joi.required(),
         MAIL_USER: Joi.required(),
         MAIL_PORT: Joi.number().required(),
+        BE_PORT: Joi.required(),
+        BE_URL: Joi.required(),
       }),
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
