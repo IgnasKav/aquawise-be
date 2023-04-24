@@ -20,13 +20,13 @@ export class UsersService {
   async register(request: RegisterRequestDto): Promise<UserEntity> {
     const registrationId = uuid();
     const password = await hash(request.password, 12);
-    const newUser: UserEntity = {
+    const newUser = new UserEntity({
       ...request,
       id: uuid(),
       password: password,
       registrationId: registrationId,
       isEmailConfirmed: false,
-    };
+    });
     return this.saveUser(newUser);
   }
 

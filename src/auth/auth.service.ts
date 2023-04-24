@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterRequestDto } from './dto/registerRequest.dto';
 import { MailService } from '../mail/mail.service';
 import { LoginRequestDto } from './dto/LoginRequest.dto';
+import { LoginResponseDto } from './dto/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
-  async login(loginRequest: LoginRequestDto): Promise<any> {
+  async login(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
     const { email, password } = loginRequest;
     const user = await this.usersService.findByEmail(email);
 
@@ -40,6 +41,7 @@ export class AuthService {
 
     return {
       jwt: await this.jwtService.signAsync(payload),
+      user: user.toDto(),
     };
   }
 

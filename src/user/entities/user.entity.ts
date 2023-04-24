@@ -1,9 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserDto } from '../dto/user.dto';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   firstName: string;
@@ -26,4 +27,23 @@ export class UserEntity {
 
   @Column()
   isEmailConfirmed: boolean;
+
+  constructor(data?: Partial<UserEntity>) {
+    this.id = data?.id ?? '';
+    this.firstName = data?.firstName ?? '';
+    this.lastName = data?.lastName ?? '';
+    this.email = data?.email ?? '';
+    this.password = data?.password ?? '';
+    this.registrationId = data?.registrationId ?? '';
+    this.isEmailConfirmed = data?.isEmailConfirmed ?? false;
+  }
+
+  toDto(): UserDto {
+    return {
+      id: this.id,
+      email: this.email,
+      firstName: this.firstName,
+      lastName: this.lastName,
+    };
+  }
 }
