@@ -19,7 +19,9 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @Controller('advertisements')
 export class AdvertisementsController {
-    constructor(private readonly advertisementsService: AdvertisementsService) {}
+    constructor(
+        private readonly advertisementsService: AdvertisementsService,
+    ) {}
 
     // for testing
     @Get()

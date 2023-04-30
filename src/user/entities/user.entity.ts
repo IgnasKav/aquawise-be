@@ -1,5 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
-import {UserDto} from '../dto/user.dto';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserDto } from '../dto/user.dto';
 
 @Entity('user')
 export class UserEntity {

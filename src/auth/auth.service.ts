@@ -1,11 +1,15 @@
-import {Injectable, NotFoundException, UnauthorizedException,} from '@nestjs/common';
-import {UsersService} from '../user/users.service';
-import {compare} from 'bcryptjs';
-import {JwtService} from '@nestjs/jwt';
-import {RegisterRequestDto} from './dto/registerRequest.dto';
-import {MailService} from '../mail/mail.service';
-import {LoginRequestDto} from './dto/LoginRequest.dto';
-import {LoginResponseDto} from './dto/LoginResponse.dto';
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
+import { UsersService } from '../user/users.service';
+import { compare } from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
+import { RegisterRequestDto } from './dto/registerRequest.dto';
+import { MailService } from '../mail/mail.service';
+import { LoginRequestDto } from './dto/LoginRequest.dto';
+import { LoginResponseDto } from './dto/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +51,9 @@ export class AuthService {
     }
 
     async confirmRegistration(registrationId: string) {
-        const user = await this.usersService.findByRegistrationId(registrationId);
+        const user = await this.usersService.findByRegistrationId(
+            registrationId,
+        );
         user.isEmailConfirmed = true;
         await this.usersService.saveUser(user);
     }

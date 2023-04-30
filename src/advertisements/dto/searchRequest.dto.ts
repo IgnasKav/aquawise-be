@@ -1,5 +1,12 @@
-import {IsBoolean, IsNumber, IsOptional, IsString, IsUUID, ValidateNested,} from 'class-validator';
-import {Type} from 'class-transformer';
+import {
+    IsBoolean,
+    IsNumber,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class SearchRequestDto {
     @IsNumber()

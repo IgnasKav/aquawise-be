@@ -1,6 +1,6 @@
-import {Module} from '@nestjs/common';
-import {ElasticsearchModule} from '@nestjs/elasticsearch';
-import {AdvertisementSearchService} from './advertisements/advertisement-search.service';
+import { Module } from '@nestjs/common';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { AdvertisementSearchService } from './advertisements/advertisement-search.service';
 
 @Module({
     imports: [

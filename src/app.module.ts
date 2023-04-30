@@ -1,13 +1,13 @@
-import {Module} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {AdvertisementsModule} from './advertisements/advertisementsModule';
-import {ConfigModule} from '@nestjs/config';
-import {UsersModule} from './user/users.module';
-import {AuthModule} from './auth/auth.module';
-import {SearchModule} from './search/search.module';
-import {MailModule} from './mail/mail.module';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdvertisementsModule } from './advertisements/advertisementsModule';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './user/users.module';
+import { AuthModule } from './auth/auth.module';
+import { SearchModule } from './search/search.module';
+import { MailModule } from './mail/mail.module';
 import * as Joi from '@hapi/joi';
-import {dataSourceOptions} from '../database/data-source';
+import { dataSourceOptions } from '../database/data-source';
 
 @Module({
     imports: [

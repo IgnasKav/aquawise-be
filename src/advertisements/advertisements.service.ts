@@ -26,7 +26,9 @@ export class AdvertisementsService {
         });
 
         if (!advertisement) {
-            throw new NotFoundException(`Advertisement with id: ${id} not found`);
+            throw new NotFoundException(
+                `Advertisement with id: ${id} not found`,
+            );
         }
 
         return advertisement;
@@ -54,7 +56,9 @@ export class AdvertisementsService {
         });
 
         if (!advertisement) {
-            throw new NotFoundException(`Advertisement with id: ${id} not found`);
+            throw new NotFoundException(
+                `Advertisement with id: ${id} not found`,
+            );
         }
         return this.advertisementsRepository.save(advertisement);
     }
