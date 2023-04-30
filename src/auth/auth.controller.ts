@@ -13,10 +13,15 @@ import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/registerRequest.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LoginRequestDto } from './dto/LoginRequest.dto';
+import { UserDto } from '../user/dto/user.dto';
+import { UsersService } from '../user/users.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        private usersService: UsersService,
+    ) {}
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
@@ -35,8 +40,8 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    getProfile(@Request() req) {
-        return req.user;
+    @Get('current')
+    getProfile(@Request() req): Promise<UserDto> {
+        return this.usersService.findByEmail(req.user.username);
     }
 }
