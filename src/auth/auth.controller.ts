@@ -3,8 +3,6 @@ import {
   Controller,
   Request,
   Post,
-  HttpCode,
-  HttpStatus,
   UseGuards,
   Get,
   Param,
@@ -18,7 +16,6 @@ import { LoginRequestDto } from './dto/LoginRequest.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() request: LoginRequestDto) {
     return this.authService.login(request);
