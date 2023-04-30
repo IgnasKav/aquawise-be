@@ -1,37 +1,30 @@
-import {
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import {IsBoolean, IsNumber, IsOptional, IsString, IsUUID, ValidateNested,} from 'class-validator';
+import {Type} from 'class-transformer';
 
 export class SearchRequestDto {
-  @IsNumber()
-  page: number;
+    @IsNumber()
+    page: number;
 
-  @IsString()
-  query: string;
+    @IsString()
+    query: string;
 
-  @IsOptional()
-  @IsUUID()
-  userId?: string;
+    @IsOptional()
+    @IsUUID()
+    userId?: string;
 
-  @IsBoolean()
-  onlyUnapproved: boolean;
+    @IsBoolean()
+    onlyUnapproved: boolean;
 
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => CategoryFilter)
-  categoryFilters?: CategoryFilter[];
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => CategoryFilter)
+    categoryFilters?: CategoryFilter[];
 }
 
 export class CategoryFilter {
-  @IsUUID()
-  categoryId: string;
+    @IsUUID()
+    categoryId: string;
 
-  @IsString()
-  categoryFilter: string;
+    @IsString()
+    categoryFilter: string;
 }

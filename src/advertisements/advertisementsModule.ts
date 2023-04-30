@@ -6,8 +6,8 @@ import { AdvertisementEntity } from './entities/advertisement.entity';
 import { SearchModule } from '../search/search.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AdvertisementEntity]), SearchModule],
-  controllers: [AdvertisementsController],
-  providers: [AdvertisementsService],
+    imports: [TypeOrmModule.forFeature([AdvertisementEntity]), SearchModule],
+    controllers: [AdvertisementsController],
+    providers: [AdvertisementsService],
 })
 export class AdvertisementsModule {}

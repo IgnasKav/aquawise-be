@@ -10,75 +10,75 @@ import { AdvertisementSearchService } from '../search/advertisements/advertiseme
 
 @Injectable()
 export class AdvertisementsService {
-  constructor(
-    @InjectRepository(AdvertisementEntity)
-    private readonly advertisementsRepository: Repository<AdvertisementEntity>,
-    private readonly advertisementSearchService: AdvertisementSearchService,
-  ) {}
+    constructor(
+        @InjectRepository(AdvertisementEntity)
+        private readonly advertisementsRepository: Repository<AdvertisementEntity>,
+        private readonly advertisementSearchService: AdvertisementSearchService,
+    ) {}
 
-  searchAdvertisements(request: SearchRequestDto) {
-    return this.advertisementSearchService.search(request.query);
-  }
-
-  async getAdvertisementById(id: string) {
-    const advertisement = await this.advertisementsRepository.findOne({
-      where: { id: id },
-    });
-
-    if (!advertisement) {
-      throw new NotFoundException(`Advertisement with id: ${id} not found`);
+    searchAdvertisements(request: SearchRequestDto) {
+        return this.advertisementSearchService.search(request.query);
     }
 
-    return advertisement;
-  }
+    async getAdvertisementById(id: string) {
+        const advertisement = await this.advertisementsRepository.findOne({
+            where: { id: id },
+        });
 
-  async createAdvertisement(request: AdvertisementCreateRequestDto) {
-    const advertisement = this.advertisementsRepository.create({
-      ...request,
-      views: 0,
-      ownerId: '73aef2dd-c227-4774-b547-b3117b543863',
-      date: new Date().toISOString(),
-    });
-    await this.advertisementsRepository.save(advertisement);
-    await this.advertisementSearchService.create(advertisement);
-    return advertisement;
-  }
+        if (!advertisement) {
+            throw new NotFoundException(`Advertisement with id: ${id} not found`);
+        }
 
-  async updateAdvertisement(
-    id: string,
-    request: AdvertisementUpdateRequestDto,
-  ) {
-    const advertisement = await this.advertisementsRepository.preload({
-      id: id,
-      ...request,
-    });
-
-    if (!advertisement) {
-      throw new NotFoundException(`Advertisement with id: ${id} not found`);
+        return advertisement;
     }
-    return this.advertisementsRepository.save(advertisement);
-  }
 
-  async deleteAdvertisement(id: string) {
-    const advertisement = await this.getAdvertisementById(id);
+    async createAdvertisement(request: AdvertisementCreateRequestDto) {
+        const advertisement = this.advertisementsRepository.create({
+            ...request,
+            views: 0,
+            ownerId: '73aef2dd-c227-4774-b547-b3117b543863',
+            date: new Date().toISOString(),
+        });
+        await this.advertisementsRepository.save(advertisement);
+        await this.advertisementSearchService.create(advertisement);
+        return advertisement;
+    }
 
-    return this.advertisementsRepository.delete(advertisement);
-  }
+    async updateAdvertisement(
+        id: string,
+        request: AdvertisementUpdateRequestDto,
+    ) {
+        const advertisement = await this.advertisementsRepository.preload({
+            id: id,
+            ...request,
+        });
 
-  addToWatchLater(id: string) {
-    return id;
-  }
+        if (!advertisement) {
+            throw new NotFoundException(`Advertisement with id: ${id} not found`);
+        }
+        return this.advertisementsRepository.save(advertisement);
+    }
 
-  searchWatchLater(request: AddToWatchLaterRequestDto) {
-    return request;
-  }
+    async deleteAdvertisement(id: string) {
+        const advertisement = await this.getAdvertisementById(id);
 
-  updateImage(image: any) {
-    return image;
-  }
+        return this.advertisementsRepository.delete(advertisement);
+    }
 
-  // for testing
-  async getAll() {
-    return await this.advertisementsRepository.find();
-  }
+    addToWatchLater(id: string) {
+        return id;
+    }
+
+    searchWatchLater(request: AddToWatchLaterRequestDto) {
+        return request;
+    }
+
+    updateImage(image: any) {
+        return image;
+    }
+
+    // for testing
+    async getAll() {
+        return await this.advertisementsRepository.find();
+    }
 }

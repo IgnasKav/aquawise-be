@@ -1,23 +1,23 @@
 import { AdvertisementState } from '../entities/advertisement.entity';
 
 export class AdvertisementDto {
-  id: string;
+    id: string;
 
-  title: string;
+    title: string;
 
-  date: Date;
+    date: Date;
 
-  description: string;
+    description: string;
 
-  state: AdvertisementState;
+    state: AdvertisementState;
 
-  city: string;
+    city: string;
 
-  views: number;
+    views: number;
 
-  price: number;
+    price: number;
 
-  ownerId: string;
+    ownerId: string;
 
-  categoryId: string;
+    categoryId: string;
 }
