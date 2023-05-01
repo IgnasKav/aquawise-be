@@ -8,6 +8,8 @@ import { SearchModule } from './search/search.module';
 import { MailModule } from './mail/mail.module';
 import * as Joi from '@hapi/joi';
 import { dataSourceOptions } from '../database/data-source';
+import { ProductsModule } from './products/products.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
     imports: [
@@ -35,6 +37,8 @@ import { dataSourceOptions } from '../database/data-source';
         AuthModule,
         UsersModule,
         SearchModule,
+        ProductsModule,
+        CompaniesModule,
         MailModule,
     ],
     controllers: [],

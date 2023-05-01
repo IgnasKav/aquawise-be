@@ -46,7 +46,7 @@ export class AdvertisementsController {
 
     @Put(':id')
     updateAdvertisement(
-    @Param('id', ParseUUIDPipe) id: string,
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() request: AdvertisementUpdateRequestDto,
     ) {
         return this.advertisementsService.updateAdvertisement(id, request);

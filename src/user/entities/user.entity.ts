@@ -28,6 +28,9 @@ export class UserEntity {
     @Column()
     isEmailConfirmed: boolean;
 
+    @Column()
+    role: UserRole;
+
     constructor(data?: Partial<UserEntity>) {
         this.id = data?.id ?? '';
         this.firstName = data?.firstName ?? '';
@@ -36,6 +39,7 @@ export class UserEntity {
         this.password = data?.password ?? '';
         this.registrationId = data?.registrationId ?? '';
         this.isEmailConfirmed = data?.isEmailConfirmed ?? false;
+        this.role = data?.role ?? UserRole.User;
     }
 
     toDto(): UserDto {
@@ -44,6 +48,13 @@ export class UserEntity {
             email: this.email,
             firstName: this.firstName,
             lastName: this.lastName,
+            role: this.role,
         };
     }
+}
+
+export enum UserRole {
+    User = 'User',
+    Admin = 'Admin',
+    Support = 'Support',
 }
