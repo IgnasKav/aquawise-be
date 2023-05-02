@@ -17,6 +17,14 @@ export class CompanyEntity {
     @Column()
     email: string;
 
+    @Column()
+    status: CompanyStatus;
+
     @Column({ nullable: true })
     logoUrl: string;
+}
+
+export enum CompanyStatus {
+    ApplicationPending = 'ApplicationPending',
+    Confirmed = 'Confirmed',
 }

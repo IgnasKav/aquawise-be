@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
-import { CompanyEntity } from './entities/company.entity';
+import { CompanyEntity, CompanyStatus } from './entities/company.entity';
 import { CompanyUpdateDto } from './dto/companyUpdate.dto';
+import { CompanyCreateDto } from './dto/companyCreate.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -23,26 +28,29 @@ export class CompaniesService {
         return company;
     }
 
-    async createCompany(request: CompanyUpdateDto) {
+    async createCompany(request: CompanyCreateDto) {
         const existingCompany = await this.companyRepository.findOne({
-            where: { name: request.name, code: request.code },
+            where: [{ name: request.name }, { code: request.code }],
         });
 
         if (existingCompany) {
             if (existingCompany.name === request.name) {
-                throw new NotFoundException(
+                throw new BadRequestException(
                     `Another company with name: ${request.name} exists`,
                 );
             }
 
             if (existingCompany.code === request.code) {
-                throw new NotFoundException(
+                throw new BadRequestException(
                     `Another company with code: ${request.code} exists`,
                 );
             }
         }
 
-        const company = this.companyRepository.create(request);
+        const company = this.companyRepository.create({
+            ...request,
+            status: CompanyStatus.ApplicationPending,
+        });
 
         await this.companyRepository.save(company);
         return company;

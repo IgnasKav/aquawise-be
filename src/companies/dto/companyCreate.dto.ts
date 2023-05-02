@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString, ValidateIf } from 'class-validator';
 export class CompanyCreateDto {
     @IsString()
     name: string;
@@ -13,5 +13,6 @@ export class CompanyCreateDto {
     email: string;
 
     @IsString()
+    @IsOptional()
     logoUrl?: string;
 }
