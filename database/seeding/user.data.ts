@@ -4,9 +4,9 @@ import { v4 as uuid } from 'uuid';
 export const users: UserEntity[] = [
     new UserEntity({
         id: uuid(),
-        firstName: 'Ignas',
-        lastName: 'Kavaliauskas',
-        email: 'ignas@gmail.com',
+        firstName: 'Matas',
+        lastName: 'Rutkauskas',
+        email: 'matas@gmail.com',
         password: 'zzz123',
         registrationId: uuid(),
         isEmailConfirmed: true,

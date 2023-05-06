@@ -8,12 +8,15 @@ import { Not, Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
 import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
+import { v4 as uuid } from 'uuid';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class CompaniesService {
     constructor(
         @InjectRepository(CompanyEntity)
         private readonly companyRepository: Repository<CompanyEntity>,
+        private mailService: MailService,
     ) {}
 
     async getCompanyById(id: string) {
@@ -22,10 +25,44 @@ export class CompaniesService {
         });
 
         if (!company) {
-            throw new NotFoundException(`Product with id: ${id} not found`);
+            throw new NotFoundException(`Company with id: ${id} not found`);
         }
 
         return company;
+    }
+
+    async getCompanyByApplicationId(applicationId: string) {
+        const company = await this.companyRepository.findOne({
+            where: { applicationId: applicationId },
+        });
+
+        if (!company) {
+            throw new NotFoundException(
+                `Company with applicationId: ${applicationId} not found`,
+            );
+        }
+
+        return company;
+    }
+
+    async confirmApplication(applicationId: string) {
+        const company = await this.companyRepository.findOne({
+            where: { applicationId: applicationId },
+        });
+
+        if (company == null) {
+            throw new BadRequestException(
+                `No company found for applicationId: ${applicationId}`,
+            );
+        }
+
+        const updatedCompany = await this.companyRepository.preload({
+            id: company.id,
+            status: CompanyStatus.Confirmed,
+        });
+
+        await this.mailService.sendApplicationConfirmation(company);
+        return this.companyRepository.save(updatedCompany);
     }
 
     async createCompany(request: CompanyCreateDto) {
@@ -49,6 +86,7 @@ export class CompaniesService {
 
         const company = this.companyRepository.create({
             ...request,
+            applicationId: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
 

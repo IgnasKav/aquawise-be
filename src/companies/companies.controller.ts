@@ -30,6 +30,20 @@ export class CompaniesController {
         return this.companiesService.getCompanyById(id);
     }
 
+    @Get('/application/:applicationId')
+    getByApplicationId(
+        @Param('applicationId', ParseUUIDPipe) applicationId: string,
+    ) {
+        return this.companiesService.getCompanyByApplicationId(applicationId);
+    }
+
+    @Post('confirm/:applicationId')
+    confirmApplication(
+        @Param('applicationId', ParseUUIDPipe) applicationId: string,
+    ) {
+        return this.companiesService.confirmApplication(applicationId);
+    }
+
     @Post()
     createCompany(@Body() request: CompanyCreateDto) {
         return this.companiesService.createCompany(request);

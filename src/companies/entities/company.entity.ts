@@ -22,6 +22,9 @@ export class CompanyEntity {
 
     @Column({ nullable: true })
     logoUrl: string;
+
+    @Column({ nullable: true })
+    applicationId: string;
 }
 
 export enum CompanyStatus {
