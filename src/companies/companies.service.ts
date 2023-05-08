@@ -31,28 +31,28 @@ export class CompaniesService {
         return company;
     }
 
-    async getCompanyByApplicationId(applicationId: string) {
+    async getByRegistrationId(registrationId: string) {
         const company = await this.companyRepository.findOne({
-            where: { applicationId: applicationId },
+            where: { companyRegistrationId: registrationId },
         });
 
         if (!company) {
             throw new NotFoundException(
-                `Company with applicationId: ${applicationId} not found`,
+                `Company with registrationId: ${registrationId} not found`,
             );
         }
 
         return company;
     }
 
-    async confirmApplication(applicationId: string) {
+    async confirmApplication(registrationId: string) {
         const company = await this.companyRepository.findOne({
-            where: { applicationId: applicationId },
+            where: { companyRegistrationId: registrationId },
         });
 
         if (company == null) {
             throw new BadRequestException(
-                `No company found for applicationId: ${applicationId}`,
+                `No company found for registrationId: ${registrationId}`,
             );
         }
 
@@ -86,7 +86,7 @@ export class CompaniesService {
 
         const company = this.companyRepository.create({
             ...request,
-            applicationId: uuid(),
+            companyRegistrationId: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
 

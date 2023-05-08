@@ -6,10 +6,11 @@ import {
 import { UsersService } from '../user/users.service';
 import { compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterRequestDto } from './dto/registerRequest.dto';
+import { InvitationRequestDto } from './dto/InvitationRequest.dto';
 import { MailService } from '../mail/mail.service';
 import { LoginRequestDto } from './dto/LoginRequest.dto';
 import { LoginResponseDto } from './dto/LoginResponse.dto';
+import { RegistrationRequestDto } from './dto/RegistrationRequest.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,10 +28,6 @@ export class AuthService {
             throw new NotFoundException('email or password is incorrect');
         }
 
-        if (!user.isEmailConfirmed) {
-            throw new UnauthorizedException('Please confirm your email');
-        }
-
         const passwordValid = await compare(password, user.password);
 
         if (!passwordValid) {
@@ -45,16 +42,46 @@ export class AuthService {
         };
     }
 
-    async register(request: RegisterRequestDto) {
-        const newUser = await this.usersService.register(request);
-        await this.mailService.sendUserConfirmation(newUser);
+    async invite(request: InvitationRequestDto) {
+        const updatedUser = await this.usersService.inviteUser(request);
+        await this.mailService.senUserInvitation(updatedUser);
     }
 
-    async confirmRegistration(registrationId: string) {
-        const user = await this.usersService.findByRegistrationId(
-            registrationId,
+    async registerAdmin(
+        request: RegistrationRequestDto,
+        companyRegistrationId: string,
+    ) {
+        const user = await this.usersService.registerAdmin(
+            request,
+            companyRegistrationId,
         );
-        user.isEmailConfirmed = true;
-        await this.usersService.saveUser(user);
+        const payload = { username: user.email, sub: user.id };
+        return {
+            jwt: await this.jwtService.signAsync(payload),
+            user: user.toDto(),
+        };
     }
+
+    async register(
+        request: RegistrationRequestDto,
+        userRegistrationId: string,
+    ) {
+        const user = await this.usersService.register(
+            request,
+            userRegistrationId,
+        );
+        const payload = { username: user.email, sub: user.id };
+        return {
+            jwt: await this.jwtService.signAsync(payload),
+            user: user.toDto(),
+        };
+    }
+
+    // async confirmRegistration(registrationId: string) {
+    //     const user = await this.usersService.findByRegistrationId(
+    //         registrationId,
+    //     );
+    //     user.isEmailConfirmed = true;
+    //     await this.usersService.saveUser(user);
+    // }
 }

@@ -7,9 +7,10 @@ export const users: UserEntity[] = [
         firstName: 'Matas',
         lastName: 'Rutkauskas',
         email: 'matas@gmail.com',
+        phone: '+00000000000',
         password: 'zzz123',
-        registrationId: uuid(),
-        isEmailConfirmed: true,
+        userRegistrationId: uuid(),
+        isRegistered: true,
         role: UserRole.Support,
     }),
 ];

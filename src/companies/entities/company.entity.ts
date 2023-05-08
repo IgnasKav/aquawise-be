@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('company')
 export class CompanyEntity {
@@ -23,8 +23,8 @@ export class CompanyEntity {
     @Column({ nullable: true })
     logoUrl: string;
 
-    @Column({ nullable: true })
-    applicationId: string;
+    @Column({ nullable: true, unique: true })
+    companyRegistrationId: string;
 }
 
 export enum CompanyStatus {

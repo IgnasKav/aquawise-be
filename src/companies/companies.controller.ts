@@ -34,7 +34,7 @@ export class CompaniesController {
     getByApplicationId(
         @Param('applicationId', ParseUUIDPipe) applicationId: string,
     ) {
-        return this.companiesService.getCompanyByApplicationId(applicationId);
+        return this.companiesService.getByRegistrationId(applicationId);
     }
 
     @Post('confirm/:applicationId')

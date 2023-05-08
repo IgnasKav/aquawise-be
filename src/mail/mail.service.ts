@@ -6,22 +6,22 @@ import { CompanyEntity } from '../companies/entities/company.entity';
 @Injectable()
 export class MailService {
     constructor(private mailerService: MailerService) {}
-    async sendUserConfirmation(user: UserEntity) {
-        const url = `${process.env.BE_URL}/auth/confirm/${user.registrationId}`;
+    async senUserInvitation(user: UserEntity) {
+        const url = `${process.env.FE_URL}/auth/register/?userRegistrationId=${user.userRegistrationId}`;
 
         await this.mailerService.sendMail({
             to: user.email,
-            subject: 'Welcome to Aquawise! Confirm your Email',
-            template: 'confirmation',
+            subject: 'You have been invited to Aquawise!',
+            template: 'userInvitation',
             context: {
-                name: user.firstName,
+                companyName: user.company.name,
                 url,
             },
         });
     }
 
     async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?applicationId=${company.applicationId}`;
+        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
 
         await this.mailerService.sendMail({
             to: company.email,
