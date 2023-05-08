@@ -1,10 +1,6 @@
-import {
-    BadRequestException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity, UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { hash } from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
@@ -51,6 +47,7 @@ export class UsersService {
             id: uuid(),
             company: company,
             password: password,
+            role: UserRole.Admin,
             isRegistered: false,
         });
         return this.saveUser(newUser);
