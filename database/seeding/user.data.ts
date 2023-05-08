@@ -13,4 +13,15 @@ export const users: UserEntity[] = [
         isRegistered: true,
         role: UserRole.Support,
     }),
+    new UserEntity({
+        id: uuid(),
+        firstName: 'Ignas',
+        lastName: 'Kavaliauskas',
+        email: 'ignas@gmail.com',
+        phone: '+37065289846',
+        password: 'zzz123',
+        userRegistrationId: uuid(),
+        isRegistered: true,
+        role: UserRole.Support,
+    }),
 ];

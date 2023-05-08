@@ -35,7 +35,7 @@ export class UserEntity {
     role: UserRole;
 
     @ManyToOne(() => CompanyEntity, { nullable: true })
-    company: CompanyEntity;
+    company?: CompanyEntity;
 
     constructor(data?: Partial<UserEntity>) {
         this.id = data?.id ?? '';
