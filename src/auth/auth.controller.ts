@@ -56,7 +56,7 @@ export class AuthController {
 
     @Get('')
     async getByRegistrationId(@Query() query) {
-        await this.usersService.findByRegistrationId(query.userRegistrationId);
+        return this.usersService.findByRegistrationId(query.userRegistrationId);
     }
 
     // @Get('confirm/:registrationId')
