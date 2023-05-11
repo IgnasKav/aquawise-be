@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { ProductUpdateDto } from './dto/productUpdate.dto';
 import { CreateProductRequestDto } from './dto/CreateProductRequest.dto';
-import { Exception } from 'handlebars';
 
 @Injectable()
 export class ProductsService {
@@ -26,7 +25,6 @@ export class ProductsService {
     }
 
     async createProduct(request: CreateProductRequestDto) {
-        throw new Exception('lol');
         const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
         const product = this.productRepository.create({
             ...request.product,
