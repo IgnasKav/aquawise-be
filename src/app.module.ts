@@ -10,6 +10,7 @@ import * as Joi from '@hapi/joi';
 import { dataSourceOptions } from '../database/data-source';
 import { ProductsModule } from './products/products.module';
 import { CompaniesModule } from './companies/companies.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
     imports: [
@@ -33,6 +34,9 @@ import { CompaniesModule } from './companies/companies.module';
             }),
         }),
         TypeOrmModule.forRoot(dataSourceOptions),
+        ServeStaticModule.forRoot({
+            rootPath: `${__dirname}/../images`,
+        }),
         AdvertisementsModule,
         AuthModule,
         UsersModule,

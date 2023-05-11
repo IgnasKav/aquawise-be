@@ -1,5 +1,11 @@
 import { IsNumber, IsString } from 'class-validator';
-export class ProductCreateDto {
+
+export class CreateProductRequestDto {
+    image: Express.Multer.File;
+    product: CreateProductForm;
+}
+
+export class CreateProductForm {
     @IsString()
     name: string;
 
@@ -8,7 +14,4 @@ export class ProductCreateDto {
 
     @IsNumber()
     price: number;
-
-    @IsString()
-    imageUrl: string;
 }

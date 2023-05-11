@@ -2,8 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { ProductCreateDto } from './dto/productCreate.dto';
 import { ProductUpdateDto } from './dto/productUpdate.dto';
+import { CreateProductRequestDto } from './dto/CreateProductRequest.dto';
+import { Exception } from 'handlebars';
 
 @Injectable()
 export class ProductsService {
@@ -24,8 +25,13 @@ export class ProductsService {
         return product;
     }
 
-    async createProduct(request: ProductCreateDto) {
-        const product = this.productRepository.create(request);
+    async createProduct(request: CreateProductRequestDto) {
+        throw new Exception('lol');
+        const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
+        const product = this.productRepository.create({
+            ...request.product,
+            imageUrl: imageUrl,
+        });
         await this.productRepository.save(product);
         return product;
     }
