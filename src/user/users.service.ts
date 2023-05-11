@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity, UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -22,6 +27,10 @@ export class UsersService {
     }
 
     async inviteUser(request: InvitationRequestDto): Promise<UserEntity> {
+        const foundUser = await this.findByEmail(request.email);
+        if (foundUser != null) {
+            throw new ConflictException('User with this email already exists');
+        }
         const newUser = new UserEntity({
             ...request,
             id: uuid(),
@@ -29,7 +38,8 @@ export class UsersService {
             userRegistrationId: uuid(),
             isRegistered: false,
         });
-        return this.saveUser(newUser);
+        await this.saveUser(newUser);
+        return await this.userRepository.findOne({ where: { id: newUser.id } });
     }
 
     async registerAdmin(
@@ -48,7 +58,7 @@ export class UsersService {
             company: company,
             password: password,
             role: UserRole.Admin,
-            isRegistered: false,
+            isRegistered: true,
         });
         return this.saveUser(newUser);
     }
@@ -83,6 +93,7 @@ export class UsersService {
     async findByRegistrationId(registrationId: string) {
         const user = await this.userRepository.findOne({
             where: { userRegistrationId: registrationId },
+            relations: { company: true },
         });
 
         if (!user) {
@@ -95,10 +106,9 @@ export class UsersService {
     }
 
     async findByEmail(email: string): Promise<UserEntity> {
-        const user = await this.userRepository.findOne({
+        return await this.userRepository.findOne({
             where: { email: email },
+            relations: { company: true },
         });
-
-        return user;
     }
 }

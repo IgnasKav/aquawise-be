@@ -22,6 +22,7 @@ export class CompaniesService {
     async getCompanyById(id: string) {
         const company = await this.companyRepository.findOne({
             where: { id: id },
+            relations: { users: true },
         });
 
         if (!company) {
@@ -130,7 +131,7 @@ export class CompaniesService {
 
     async deleteCompany(id: string) {
         const company = await this.getCompanyById(id);
-        return this.companyRepository.delete(company);
+        //return this.companyRepository.delete();
     }
 
     async getAllCompanies() {

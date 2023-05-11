@@ -43,8 +43,8 @@ export class AuthService {
     }
 
     async invite(request: InvitationRequestDto) {
-        const updatedUser = await this.usersService.inviteUser(request);
-        await this.mailService.senUserInvitation(updatedUser);
+        const createdUser = await this.usersService.inviteUser(request);
+        await this.mailService.senUserInvitation(createdUser);
     }
 
     async registerAdmin(

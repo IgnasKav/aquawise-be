@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('company')
 export class CompanyEntity {
@@ -25,6 +32,9 @@ export class CompanyEntity {
 
     @Column({ nullable: true, unique: true })
     companyRegistrationId: string;
+
+    @OneToMany(() => UserEntity, (user) => user.company)
+    users: UserEntity[];
 }
 
 export enum CompanyStatus {
