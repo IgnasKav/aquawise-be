@@ -10,7 +10,10 @@ import * as Joi from '@hapi/joi';
 import { dataSourceOptions } from '../database/data-source';
 import { ProductsModule } from './products/products.module';
 import { CompaniesModule } from './companies/companies.module';
+import { ClientsModule } from './clients/clients.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { OrdersModule } from './orders/orders.module';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -43,7 +46,21 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         SearchModule,
         ProductsModule,
         CompaniesModule,
+        OrdersModule,
+        ClientsModule,
         MailModule,
+        RouterModule.register([
+            {
+                path: 'companies',
+                module: CompaniesModule,
+                children: [
+                    {
+                        path: ':companyId/orders',
+                        module: OrdersModule,
+                    },
+                ],
+            },
+        ]),
     ],
     controllers: [],
     providers: [],

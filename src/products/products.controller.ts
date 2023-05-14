@@ -24,12 +24,13 @@ import {
     EditProductForm,
     EditProductRequestDto,
 } from './dto/EditProductRequest.dto';
+import { FirebaseAccessible } from '../auth/decorators/firebase.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
+    @FirebaseAccessible()
     @Get()
     getAll() {
         return this.productsService.getAllProducts();
