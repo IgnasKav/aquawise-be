@@ -1,10 +1,4 @@
-import {
-    Column,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { OrderEntity } from '../../orders/entities/order.entity';
 
@@ -42,6 +36,18 @@ export class CompanyEntity {
 
     @OneToMany(() => OrderEntity, (order) => order.company)
     orders: OrderEntity[];
+
+    constructor(data?: Partial<CompanyEntity>) {
+        this.id = data?.id ?? '';
+        this.name = data?.name ?? '';
+        this.code = data?.code ?? '';
+        this.phone = data?.phone ?? '';
+        this.email = data?.email ?? '';
+        this.status = data?.status ?? CompanyStatus.ApplicationPending;
+        this.brandColor = data?.brandColor ?? null;
+        this.logoUrl = data?.logoUrl ?? null;
+        this.companyRegistrationId = data?.companyRegistrationId ?? null;
+    }
 }
 
 export enum CompanyStatus {

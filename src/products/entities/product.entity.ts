@@ -24,7 +24,7 @@ export class ProductEntity {
     @Column()
     imageUrl: string;
 
-    @ManyToOne(() => CompanyEntity, { nullable: true })
+    @ManyToOne(() => CompanyEntity, { nullable: false })
     @JoinColumn({ name: 'companyId' })
-    company?: CompanyEntity;
+    company: CompanyEntity;
 }
