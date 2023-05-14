@@ -7,6 +7,7 @@ import {
     ParseUUIDPipe,
     Post,
     Put,
+    Request,
     UploadedFile,
     UseGuards,
     UseInterceptors,
@@ -56,8 +57,11 @@ export class ProductsController {
     createProduct(
         @UploadedFile() image: Express.Multer.File,
         @Body() body: { product: string },
+        @Request() req,
     ) {
+        const userId = req.user.userId;
         const request: CreateProductRequestDto = {
+            userId: userId,
             image: image,
             product: JSON.parse(body.product) as CreateProductForm,
         };

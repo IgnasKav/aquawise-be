@@ -1,6 +1,7 @@
 import { IsNumber, IsString } from 'class-validator';
 
 export class CreateProductRequestDto {
+    userId: string;
     image: Express.Multer.File;
     product: CreateProductForm;
 }
