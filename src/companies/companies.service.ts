@@ -96,35 +96,16 @@ export class CompaniesService {
     }
 
     async updateCompany(id: string, request: CompanyUpdateDto) {
-        const existingCompany = await this.companyRepository.findOne({
-            where: {
-                id: Not(id),
-                name: request.name,
-                code: request.code,
-            },
-        });
-
-        if (existingCompany) {
-            if (existingCompany.name === request.name) {
-                throw new NotFoundException(
-                    `Another company with name: ${request.name} exists`,
-                );
-            }
-
-            if (existingCompany.code === request.code) {
-                throw new NotFoundException(
-                    `Another company with code: ${request.code} exists`,
-                );
-            }
-        }
-
+        const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
         const company = await this.companyRepository.preload({
             id: id,
+            logoUrl: imageUrl,
+            brandColor: request.brandColor,
             ...request,
         });
 
         if (!company) {
-            throw new NotFoundException(`Product with id: ${id} not found`);
+            throw new NotFoundException(`Company with id: ${id} not found`);
         }
         return this.companyRepository.save(company);
     }

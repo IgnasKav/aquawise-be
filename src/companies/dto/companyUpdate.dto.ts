@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CompanyCreateDto } from './companyCreate.dto';
+import { IsString } from 'class-validator';
 
-export class CompanyUpdateDto extends PartialType(CompanyCreateDto) {}
+export class CompanyUpdateDto {
+    image?: Express.Multer.File;
+    @IsString()
+    brandColor?: string;
+}
