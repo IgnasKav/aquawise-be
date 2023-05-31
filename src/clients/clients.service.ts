@@ -1,9 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { CompanyClient, Device } from './dto/Client';
+import { CompanyEntity } from '../companies/entities/company.entity';
+import { ClientCreateDto } from './dto/clientCreate.dto';
+import { ClientEntity } from './entities/client.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { OrderEntity } from '../orders/entities/order.entity';
 
 @Injectable()
 export class ClientsService {
+    constructor(
+        @InjectRepository(ClientEntity)
+        private readonly clientRepository: Repository<ClientEntity>,
+    ) {}
+
+    async getClientsNew(companyId: string) {
+        return await this.clientRepository.find({
+            where: { company: { id: companyId } },
+        });
+    }
+
     async getClients(companyId: string) {
         const clients: CompanyClient[] = [];
         const companyUsersRes = await admin
@@ -38,5 +55,13 @@ export class ClientsService {
             }),
         );
         return clients;
+    }
+
+    async createClient(request: ClientCreateDto, companyId: string) {
+        const newClient = new ClientEntity({
+            ...request,
+            company: { id: companyId } as CompanyEntity,
+        });
+        return this.clientRepository.save(newClient);
     }
 }

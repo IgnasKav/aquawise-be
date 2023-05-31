@@ -1,14 +1,15 @@
 import {
     Column,
+    CreateDateColumn,
     Entity,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { UserRole } from '../../user/entities/user.entity';
-import { CompanyEntity } from '../../companies/entities/company.entity';
-import { ProductEntity } from '../../products/entities/product.entity';
 import { OrderItemEntity } from './orderItem.entity';
+import { ClientEntity } from '../../clients/entities/client.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('order')
 export class OrderEntity {
@@ -18,18 +19,23 @@ export class OrderEntity {
     @Column()
     status: OrderStatus;
 
-    @ManyToOne(() => CompanyEntity)
-    company: CompanyEntity;
+    @Column()
+    serialNumber: string;
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
+
+    @ManyToOne(() => UserEntity, { nullable: true })
+    responsibleUser: UserEntity;
+
+    @ManyToOne(() => ClientEntity)
+    client: ClientEntity;
 
     @OneToMany(() => OrderItemEntity, (item) => item.order, { cascade: true })
     items: OrderItemEntity[];
-
-    constructor(data?: Partial<OrderEntity>) {
-        this.id = data?.id ?? '';
-        this.status = data?.status ?? OrderStatus.Todo;
-        this.company = data?.company ?? new CompanyEntity();
-        this.items = data?.items;
-    }
 }
 
 export enum OrderStatus {

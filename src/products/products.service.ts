@@ -32,7 +32,6 @@ export class ProductsService {
     }
 
     async createProduct(request: CreateProductRequestDto) {
-        const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
         const userEntity = await this.usersService.findById(request.userId);
 
         if (!userEntity) {
@@ -49,7 +48,7 @@ export class ProductsService {
 
         const product = this.productRepository.create({
             ...request.product,
-            imageUrl: imageUrl,
+            imageUrl: request.image.filename,
             company: userEntity.company,
         });
         await this.productRepository.save(product);

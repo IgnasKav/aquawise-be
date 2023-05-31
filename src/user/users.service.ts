@@ -38,7 +38,10 @@ export class UsersService {
             isRegistered: false,
         });
         await this.saveUser(newUser);
-        return await this.userRepository.findOne({ where: { id: newUser.id } });
+        return await this.userRepository.findOne({
+            where: { id: newUser.id },
+            relations: { company: true },
+        });
     }
 
     async registerAdmin(

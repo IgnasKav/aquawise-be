@@ -2,7 +2,9 @@ import {
     Body,
     Controller,
     Delete,
+    forwardRef,
     Get,
+    Inject,
     Param,
     ParseUUIDPipe,
     Post,
@@ -23,12 +25,14 @@ import {
     EditProductForm,
     EditProductRequestDto,
 } from '../products/dto/EditProductRequest.dto';
+import { OrdersService } from '../orders/orders.service';
 
 @Controller('')
 export class CompaniesController {
     constructor(
         private readonly companiesService: CompaniesService,
         private readonly clientsService: ClientsService,
+        private readonly ordersService: OrdersService,
     ) {}
 
     @UseGuards(JwtAuthGuard)
@@ -40,6 +44,12 @@ export class CompaniesController {
     @Get(':id')
     getById(@Param('id', ParseUUIDPipe) id: string) {
         return this.companiesService.getCompanyById(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':id/orders')
+    getCompanyOrders(@Param('id', ParseUUIDPipe) id: string) {
+        return this.ordersService.getCompanyOrders(id);
     }
 
     @UseGuards(JwtAuthGuard)

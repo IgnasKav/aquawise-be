@@ -1,5 +1,5 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { OrderStatus } from '../entities/order.entity';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { ProductEntity } from '../../products/entities/product.entity';
 
 export class CreateOrderItemRequestDto {
     @IsString()
@@ -14,7 +14,6 @@ export class CreateOrderItemRequestDto {
     @IsOptional()
     price: number;
 
-    @IsString()
     @IsOptional()
-    productId?: string;
+    product?: ProductEntity;
 }

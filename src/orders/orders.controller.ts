@@ -19,8 +19,8 @@ export class OrdersController {
     constructor(private readonly ordersService: OrdersService) {}
 
     @Get()
-    getAll() {
-        return this.ordersService.getAllOrders();
+    getAll(@Param('clientId') clientId: string) {
+        return this.ordersService.getAllOrders(clientId);
     }
 
     @Get(':id')
@@ -31,19 +31,20 @@ export class OrdersController {
     @Post()
     createOrder(
         @Param('companyId') companyId: string,
+        @Param('clientId') clientId: string,
         @Body() request: CreateOrderRequestDto,
     ) {
-        console.log(companyId);
-        return this.ordersService.createOrder(companyId, request);
+        return this.ordersService.createOrder(companyId, clientId, request);
     }
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     updateOrder(
+        @Param('clientId') clientId: string,
         @Param('id', ParseUUIDPipe) id: string,
         @Body() request: UpdateOrderRequestDto,
     ) {
-        return this.ordersService.updateOrder(id, request);
+        return this.ordersService.updateOrder(clientId, id, request);
     }
 
     @UseGuards(JwtAuthGuard)

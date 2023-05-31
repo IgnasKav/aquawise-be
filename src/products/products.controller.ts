@@ -27,7 +27,6 @@ import {
 } from './dto/EditProductRequest.dto';
 
 @Controller('products')
-@UseGuards(JwtAuthGuard)
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
@@ -45,7 +44,7 @@ export class ProductsController {
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: './dist/images',
+                destination: './images',
                 filename: (req, file, cb) => {
                     const fileExtension = file.originalname.split('.')[1];
                     const fileName = `${uuid()}.${fileExtension}`;
@@ -59,7 +58,7 @@ export class ProductsController {
         @Body() body: { product: string },
         @Request() req,
     ) {
-        const userId = req.user.userId;
+        const userId = req.userId;
         const request: CreateProductRequestDto = {
             userId: userId,
             image: image,

@@ -87,6 +87,7 @@ export class CompaniesService {
 
         const company = this.companyRepository.create({
             ...request,
+            id: uuid(),
             companyRegistrationId: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
@@ -96,10 +97,12 @@ export class CompaniesService {
     }
 
     async updateCompany(id: string, request: CompanyUpdateDto) {
-        const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
+        if (request.image) {
+            const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
+        }
+
         const company = await this.companyRepository.preload({
             id: id,
-            logoUrl: imageUrl,
             brandColor: request.brandColor,
             ...request,
         });

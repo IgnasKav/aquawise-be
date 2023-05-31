@@ -34,9 +34,6 @@ export class CompanyEntity {
     @OneToMany(() => UserEntity, (user) => user.company)
     users: UserEntity[];
 
-    @OneToMany(() => OrderEntity, (order) => order.company)
-    orders: OrderEntity[];
-
     constructor(data?: Partial<CompanyEntity>) {
         this.id = data?.id ?? '';
         this.name = data?.name ?? '';

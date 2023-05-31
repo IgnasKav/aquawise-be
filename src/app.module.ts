@@ -38,7 +38,7 @@ import { APP_GUARD, RouterModule } from '@nestjs/core';
         }),
         TypeOrmModule.forRoot(dataSourceOptions),
         ServeStaticModule.forRoot({
-            rootPath: `${__dirname}/../images`,
+            rootPath: `./images`,
         }),
         AdvertisementsModule,
         AuthModule,
@@ -55,8 +55,14 @@ import { APP_GUARD, RouterModule } from '@nestjs/core';
                 module: CompaniesModule,
                 children: [
                     {
-                        path: ':companyId/orders',
-                        module: OrdersModule,
+                        path: ':companyId/clients',
+                        module: ClientsModule,
+                        children: [
+                            {
+                                path: ':clientId/orders',
+                                module: OrdersModule,
+                            },
+                        ],
                     },
                 ],
             },
