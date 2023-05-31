@@ -58,6 +58,7 @@ export class UserEntity {
             firstName: this.firstName,
             lastName: this.lastName,
             role: this.role,
+            company: this.company,
         };
     }
 }

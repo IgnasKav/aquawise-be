@@ -1,4 +1,5 @@
 import { UserRole } from '../entities/user.entity';
+import { CompanyEntity } from '../../companies/entities/company.entity';
 
 export class UserDto {
     id: string;
@@ -7,4 +8,5 @@ export class UserDto {
     email: string;
     phone: string;
     role: UserRole;
+    company?: CompanyEntity;
 }
