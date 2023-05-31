@@ -18,7 +18,7 @@ import { APP_GUARD, RouterModule } from '@nestjs/core';
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: `.${process.env.NODE_ENV}.env`,
+            envFilePath: `.env`,
             validationSchema: Joi.object({
                 DATABASE_HOST: Joi.required(),
                 DATABASE_PORT: Joi.number().required(),
