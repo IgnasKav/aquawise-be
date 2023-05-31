@@ -32,7 +32,6 @@ import { APP_GUARD, RouterModule } from '@nestjs/core';
                 MAIL_HOST: Joi.required(),
                 MAIL_USER: Joi.required(),
                 MAIL_PORT: Joi.number().required(),
-                BE_PORT: Joi.required(),
                 BE_URL: Joi.required(),
             }),
         }),
