@@ -46,6 +46,13 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
+  aquawise-be:
+    container_name: aquawise-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
 networks:
   es-net:
     driver: bridge
