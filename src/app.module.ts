@@ -13,18 +13,18 @@ import { CompaniesModule } from './companies/companies.module';
 import { ClientsModule } from './clients/clients.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrdersModule } from './orders/orders.module';
-import { APP_GUARD, RouterModule } from '@nestjs/core';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: `.env`,
             validationSchema: Joi.object({
-                PG_HOST: Joi.required(),
-                PG_PORT: Joi.number().required(),
-                PG_USER: Joi.required(),
-                PG_PASSWORD: Joi.required(),
-                PG_DATABASE_NAME: Joi.required(),
+                PGHOST: Joi.required(),
+                PGPORT: Joi.number().required(),
+                PGUSER: Joi.required(),
+                PGPASSWORD: Joi.required(),
+                PGDATABASE: Joi.required(),
                 ELASTICSEARCH_PASSWORD: Joi.required(),
                 ELASTICSEARCH_USERNAME: Joi.required(),
                 ELASTICSEARCH_NODE: Joi.required(),
