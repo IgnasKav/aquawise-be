@@ -37,6 +37,6 @@ async function bootstrap() {
 
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalInterceptors(new TimeoutInterceptor());
-    await app.listen(process.env.PORT);
+    await app.listen(process.env.BE_PORT);
 }
 bootstrap();

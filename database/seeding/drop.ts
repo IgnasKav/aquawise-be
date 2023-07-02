@@ -5,8 +5,10 @@ const tableNames = [
     'product',
     'order',
     'user',
+    'client',
     'company',
     'migrations',
+    'advertisements',
 ];
 
 async function main() {

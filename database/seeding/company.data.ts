@@ -5,7 +5,7 @@ import {
 
 export const companies: CompanyEntity[] = [
     new CompanyEntity({
-        id: '6a27b55f-8945-49cb-9379-a7b52d7a39c7',
+        id: '1922e9da-bf6b-4637-94a7-25586a4d4240',
         name: 'Kampanija',
         code: '123',
         phone: '+37065289846',

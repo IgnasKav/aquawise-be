@@ -27,8 +27,14 @@ export class ClientsService {
             .database()
             .ref(`CompanyUsers/${companyId}`)
             .get();
+
+        if (!companyUsersRes.val()) {
+            return [];
+        }
+
+        const companyUserIds = Object.keys(companyUsersRes.val());
         await Promise.all(
-            Object.keys(companyUsersRes.val()).map(async (userId: string) => {
+            companyUserIds.map(async (userId: string) => {
                 const userAuthDataResp = await admin.auth().getUser(userId);
                 const userDataResp = await admin
                     .database()
