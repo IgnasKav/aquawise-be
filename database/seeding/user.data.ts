@@ -26,4 +26,16 @@ export const users: UserEntity[] = [
         role: UserRole.Admin,
         company: companies[0],
     }),
+    new UserEntity({
+        id: '44933c64-76b8-475e-960a-6428c206dbd8',
+        firstName: 'User',
+        lastName: 'Account',
+        email: 'user@gmail.com',
+        phone: '+37065289846',
+        password: 'zzz123',
+        userRegistrationId: uuid(),
+        isRegistered: true,
+        role: UserRole.User,
+        company: companies[0],
+    }),
 ];

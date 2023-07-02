@@ -18,11 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "typeorm": "npm run build && npx typeorm -d dist/database/data-source.js",
-    "migration:generate": "npm run typeorm -- migration:generate",
-    "migration:run": "npm run typeorm -- migration:run",
+    "migration:generate": "NODE_ENV=dev npm run typeorm -- migration:generate",
+    "migration:run": "NODE_ENV=dev npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "seed": "ts-node database/seeding/seed.ts",
-    "drop": "ts-node database/seeding/drop.ts"
+    "seed": "NODE_ENV=dev ts-node database/seeding/seed.ts",
+    "drop": "NODE_ENV=dev ts-node database/seeding/drop.ts"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.2.1",

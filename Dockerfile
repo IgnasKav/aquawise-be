@@ -17,7 +17,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=development /app/dist/ ./dist/
-COPY .env.production ./.env
+COPY .env.prod ./.env
 
 EXPOSE 5001
 

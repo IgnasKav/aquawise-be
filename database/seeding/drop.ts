@@ -1,4 +1,5 @@
 import dataSource from '../data-source';
+import * as dotenv from 'dotenv';
 
 const tableNames = [
     'order-item',
