@@ -1,4 +1,4 @@
-import dataSource from '../data-source';
+import dataSource, {dataSourceOptions} from '../data-source';
 import { UserEntity } from '../../src/user/entities/user.entity';
 import { users as usersData } from './user.data';
 import { companies } from './company.data';
@@ -6,6 +6,7 @@ import { hash } from 'bcryptjs';
 import { CompanyEntity } from '../../src/companies/entities/company.entity';
 
 async function main() {
+    console.log('options', dataSourceOptions);
     await dataSource.initialize();
     await createCompanies();
     await createUsers();

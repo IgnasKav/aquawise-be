@@ -6,23 +6,21 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "NODE_ENV=prod nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node --max-old-space-size=1024 dist/src/main.js",
+    "build": "nest build",
     "dev": "NODE_ENV=dev nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "NODE_ENV=prod node dist/main",
+    "start:prod": "NODE_ENV=prod node dist/src/main.js",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "typeorm": "npm run build && npx typeorm -d dist/database/data-source.js",
-    "migration:generate": "NODE_ENV=dev npm run typeorm -- migration:generate",
-    "migration:run": "NODE_ENV=dev npm run typeorm -- migration:run",
+    "migration:generate": "npm run typeorm -- migration:generate",
+    "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "seed": "NODE_ENV=dev ts-node database/seeding/seed.ts",
-    "drop": "NODE_ENV=dev ts-node database/seeding/drop.ts"
+    "seed": "node dist/database/seeding/seed.js",
+    "drop": "node dist/database/seeding/drop.js"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.2.1",
@@ -55,7 +53,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.4.0",
     "typeorm": "^0.3.14",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "ts-node": "^10.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.4.2",
@@ -82,7 +81,6 @@
     "supertest": "^6.1.6",
     "ts-jest": "29.0.5",
     "ts-loader": "^9.2.6",
-    "ts-node": "^10.3.0",
     "tsconfig-paths": "^3.11.0",
     "typescript": "4.8.4"
   }
