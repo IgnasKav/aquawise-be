@@ -17,10 +17,10 @@ jobs:
           token: ${{ secrets.DO_TOKEN }}
 
       - name: Build container image
-        run: docker build -t ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}:latest .
+        run: docker build -t ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest .
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}:latest
+        run: docker push ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest
