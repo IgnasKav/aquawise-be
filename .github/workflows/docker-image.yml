@@ -33,7 +33,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.DO_SSH }}
         run: |
           mkdir -p ~/.ssh
-          echo "$PRIVATE_KEY"
+          echo ${{ secrets.DO_SSH }}
           echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           echo "Host *" >> ~/.ssh/config
