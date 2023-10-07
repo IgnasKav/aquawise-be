@@ -33,7 +33,7 @@ jobs:
         with:
           HOST: 159.65.120.239
           USERNAME: root
-          KEY: 75:41:6d:8d:3a:9e:5b:ae:5e:4f:a3:db:03:88:0f:7b
+          KEY: ${{ secrets.DO_SSH }}
           SCRIPT: |
             doctl registry login --expiry-seconds 1200
             docker pull ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest
