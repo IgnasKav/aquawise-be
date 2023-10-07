@@ -37,5 +37,6 @@ jobs:
 
       - name: SSH and Pull Docker Image
         run: |
+          cat ~/.ssh/id_rsa
           ssh root@159.65.120.239 "doctl registry login --expiry-seconds 1200"
           ssh root@159.65.120.239 "docker pull ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest"
