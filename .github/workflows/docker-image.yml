@@ -28,19 +28,12 @@ jobs:
   ssh-into-container:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup SSH Key
-        env:
-          PRIVATE_KEY: ${{ secrets.DO_SSH }}
-        run: |
-          mkdir -p ~/.ssh
-          echo ${{ secrets.DO_SSH }}
-          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "Host *" >> ~/.ssh/config
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-
-      - name: SSH and Pull Docker Image
-        run: |
-          cat ~/.ssh/id_rsa
-          ssh root@159.65.120.239 "doctl registry login --expiry-seconds 1200"
-          ssh root@159.65.120.239 "docker pull ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest"
+      - name: Execute remote command
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          HOST: 159.65.120.239
+          USERNAME: root
+          KEY: ${{ secrets.DO_SSH }}
+          SCRIPT: |
+            doctl registry login --expiry-seconds 1200
+            docker pull ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest
