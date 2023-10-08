@@ -34,6 +34,7 @@ jobs:
           HOST: 64.227.113.159
           USERNAME: root
           KEY: ${{ secrets.DO_SSH }}
+          ENV: DIGITALOCEAN_ACCESS_TOKEN=${{ secrets.DO_TOKEN }}
           SCRIPT: |
             doctl registry login --expiry-seconds 1200
             docker pull ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:latest
