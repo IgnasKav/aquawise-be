@@ -11,6 +11,9 @@ export const dataSourceOptions: DataSourceOptions = {
     database: process.env.PGDATABASE,
     entities: ['dist/**/*.entity.js'],
     migrations: ['dist/database/migrations/*.js'],
+    ssl: {
+        rejectUnauthorized: false,
+    },
 };
 
 const dataSource = new DataSource(dataSourceOptions);
