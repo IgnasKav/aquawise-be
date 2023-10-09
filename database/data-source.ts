@@ -13,6 +13,7 @@ export const dataSourceOptions: DataSourceOptions = {
     migrations: ['dist/database/migrations/*.js'],
     ssl: {
         rejectUnauthorized: false,
+        ca: process.env.DO_DATABASE_CERT,
     },
 };
 
