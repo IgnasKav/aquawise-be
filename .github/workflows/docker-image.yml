@@ -1,26 +1,26 @@
-#name: Docker Image CI
-#
-#on:
-#  push:
-#    branches: [ "main" ]
-#
-#jobs:
-#  create-docker-image:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout master
-#        uses: actions/checkout@v3
-#
-#      - name: Install doctl
-#        uses: digitalocean/action-doctl@v2
-#        with:
-#          token: ${{ secrets.DO_TOKEN }}
-#
-#      - name: Build container image
-#        run: docker build -t ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:be .
-#
-#      - name: Login to DO
-#        run: doctl registry login --expiry-seconds 1200
-#
-#      - name: Push image to DigitalOcean Container Registry
-#        run: docker push ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:be
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  create-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN }}
+
+      - name: Build container image
+        run: docker build -t ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:be .
+
+      - name: Login to DO
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/aquawise:be
