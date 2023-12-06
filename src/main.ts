@@ -19,15 +19,15 @@ async function bootstrap() {
     );
 
     const firebase_params = {
-        type: process.env.TYPE,
-        projectId: process.env.PROJECT_ID,
-        privateKey: process.env.PRIVATE_KEY,
-        client_email: process.env.CLIENT_EMAIL,
-        clientId: process.env.CLIENT_ID,
-        authUri: process.env.AUTH_URI,
-        tokenUri: process.env.TOKEN_URI,
-        authProviderX509CertUrl: process.env.AUTH_PROVIDER_X509_CERT_URL,
-        clientX509CertUrl: process.env.CLIENT_X509_CERT_URL,
+        type: process.env.FB_ACCOUNT_TYPE,
+        projectId: process.env.FB_PROJECT_ID,
+        privateKey: process.env.FB_PRIVATE_KEY,
+        client_email: process.env.FB_CLIENT_EMAIL,
+        clientId: process.env.FB_CLIENT_ID,
+        authUri: process.env.FB_AUTH_URI,
+        tokenUri: process.env.FB_TOKEN_URI,
+        authProviderX509CertUrl: process.env.FB_AUTH_PROVIDER_X509_CERT_URL,
+        clientX509CertUrl: process.env.FB_CLIENT_X509_CERT_URL,
     };
 
     admin.initializeApp({

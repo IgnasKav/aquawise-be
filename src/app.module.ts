@@ -4,8 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
-import * as Joi from '@hapi/joi';
-import { dataSourceOptions } from '../database/data-source';
+import { createDataSourceOptions } from '../database/data-source';
 import { ProductsModule } from './products/products.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ClientsModule } from './clients/clients.module';
@@ -16,7 +15,7 @@ import { RouterModule } from '@nestjs/core';
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        TypeOrmModule.forRoot(dataSourceOptions),
+        TypeOrmModule.forRoot(createDataSourceOptions()),
         ServeStaticModule.forRoot({
             rootPath: `./images`,
         }),

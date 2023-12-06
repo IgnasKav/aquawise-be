@@ -1,5 +1,7 @@
-import dataSource from '../data-source';
-import * as dotenv from 'dotenv';
+import { createDataSourceOptions } from '../data-source';
+import { DataSource } from 'typeorm';
+
+const dataSource = new DataSource(createDataSourceOptions());
 
 const tableNames = [
     'order-item',

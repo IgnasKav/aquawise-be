@@ -3,6 +3,7 @@ import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
+// if env is prod no need to import mailer module also remove mails container from prod docker-compose
 @Global()
 @Module({
     imports: [

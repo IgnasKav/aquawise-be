@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { UserEntity } from '../user/entities/user.entity';
-import { CompanyEntity } from '../companies/entities/company.entity';
-
-import * as sgMail from '@sendgrid/mail';
+import { Injectable } from '@nestjs/common';
+import { CompanyEntity } from 'src/companies/entities/company.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { IMailService } from '../models/IMailService';
 
 @Injectable()
-export class MailService {
+export class LocalMailService implements IMailService {
     constructor(private mailerService: MailerService) {}
     async senUserInvitation(user: UserEntity) {
         const url = `${process.env.FE_URL}/auth/register/?userRegistrationId=${user.userRegistrationId}`;
