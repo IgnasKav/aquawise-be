@@ -8,6 +8,7 @@ import { IMailService } from '../models/IMailService';
 export class LocalMailService implements IMailService {
     constructor(private mailerService: MailerService) {}
     async senUserInvitation(user: UserEntity) {
+        console.log('Sending email to: ', user.email);
         const url = `${process.env.FE_URL}/auth/register/?userRegistrationId=${user.userRegistrationId}`;
 
         await this.mailerService.sendMail({
