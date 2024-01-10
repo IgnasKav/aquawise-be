@@ -9,19 +9,22 @@ import { ProductEntity } from './entities/product.entity';
 import { EditProductRequestDto } from './dto/EditProductRequest.dto';
 import { CreateProductRequestDto } from './dto/CreateProductRequest.dto';
 import { UsersService } from '../user/users.service';
+import { ImageEntity } from '../images/entities/image.entity';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
+        @InjectRepository(ImageEntity)
+        private productImageRepository: Repository<ImageEntity>,
         private usersService: UsersService,
     ) {}
 
     async getProductById(id: string) {
         const product = await this.productRepository.findOne({
             where: { id: id },
-            relations: { company: true },
+            relations: { company: true, images: true },
         });
 
         if (!product) {
@@ -46,12 +49,17 @@ export class ProductsService {
             );
         }
 
-        const product = this.productRepository.create({
+        const newProduct = {
             ...request.product,
-            imageUrl: request.image.filename,
             company: userEntity.company,
-        });
+        };
+
+        console.log(newProduct);
+
+        const product = this.productRepository.create(newProduct);
+
         await this.productRepository.save(product);
+
         return product;
     }
 
@@ -72,6 +80,8 @@ export class ProductsService {
     }
 
     async getAllProducts() {
-        return await this.productRepository.find();
+        return await this.productRepository.find({
+            relations: { images: true, company: true },
+        });
     }
 }

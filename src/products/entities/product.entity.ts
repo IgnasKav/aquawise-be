@@ -3,9 +3,11 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CompanyEntity } from '../../companies/entities/company.entity';
+import { ImageEntity } from '../../images/entities/image.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -21,10 +23,11 @@ export class ProductEntity {
     @Column()
     price: number;
 
-    @Column()
-    imageUrl: string;
+    @OneToMany(() => ImageEntity, (image) => image.product, {
+        cascade: true,
+    })
+    images: ImageEntity[];
 
-    @ManyToOne(() => CompanyEntity, { nullable: false })
-    @JoinColumn({ name: 'companyId' })
+    @ManyToOne(() => CompanyEntity, { nullable: true })
     company: CompanyEntity;
 }

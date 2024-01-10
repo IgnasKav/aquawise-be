@@ -1,8 +1,9 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString, ValidateNested } from 'class-validator';
+import { ImageDto } from 'src/images/dto/Image.dto';
+import { ImageEntity } from 'src/images/entities/image.entity';
 
 export class CreateProductRequestDto {
     userId: string;
-    image: Express.Multer.File;
     product: CreateProductForm;
 }
 
@@ -15,4 +16,7 @@ export class CreateProductForm {
 
     @IsNumber()
     price: number;
+
+    @ValidateNested()
+    images: ImageDto[];
 }

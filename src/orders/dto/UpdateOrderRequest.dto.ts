@@ -4,8 +4,8 @@ import { OrderStatus } from '../entities/order.entity';
 export class UpdateOrderRequestDto {
     @IsString()
     @IsOptional()
-    responsibleUserId;
+    responsibleUserId?: string;
     @IsEnum(OrderStatus)
     @IsOptional()
-    status;
+    status?: OrderStatus;
 }
