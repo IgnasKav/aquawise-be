@@ -10,6 +10,9 @@ export class ImageEntity {
     @Column()
     imageUrl: string;
 
+    @Column({ nullable: true })
+    productId: string | null;
+
     @ManyToOne(() => ProductEntity, (product) => product.images, {
         nullable: true, // This makes the relation optional
     })

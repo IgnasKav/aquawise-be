@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImageEntity } from './entities/image.entity';
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
 import { ImageDeleteRequest } from './dto/ImageDeleteRequest';
+import { promisify } from 'util';
 
 @Injectable()
 export class ImagesService {
@@ -33,16 +34,23 @@ export class ImagesService {
     }
 
     async deleteImages(req: ImageDeleteRequest) {
+        const unlinkAsync = promisify(fs.unlink);
+
         const imageIds = req.images.map((x) => x.id);
 
-        const deleteFromFileSystemPromises = req.images.map((image) => {
+        const deleteFromFileSystemPromises = req.images.map(async (image) => {
             const path = `./images/${image.imageUrl}`;
-            return fs.unlink(path, (err) => {
-                if (err) throw err;
-            });
+
+            return unlinkAsync(path);
         });
 
-        await Promise.all(deleteFromFileSystemPromises);
-        await this.imageRepo.delete(imageIds);
+        try {
+            await Promise.all(deleteFromFileSystemPromises);
+            await this.imageRepo.delete(imageIds);
+        } catch (e) {
+            throw new NotFoundException(
+                `Images couldn't be deleted ${e.message}`,
+            );
+        }
     }
 }

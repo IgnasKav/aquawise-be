@@ -21,10 +21,6 @@ import { ClientsService } from '../clients/clients.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
-import {
-    EditProductForm,
-    EditProductRequestDto,
-} from '../products/dto/EditProductRequest.dto';
 import { OrdersService } from '../orders/orders.service';
 
 @Controller('')

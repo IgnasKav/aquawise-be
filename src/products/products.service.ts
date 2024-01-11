@@ -6,10 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { EditProductRequestDto } from './dto/EditProductRequest.dto';
-import { CreateProductRequestDto } from './dto/CreateProductRequest.dto';
+import { CreateProductRequestDto } from './dto/CreateProductRequest';
 import { UsersService } from '../user/users.service';
 import { ImageEntity } from '../images/entities/image.entity';
+import { EditProductForm } from './dto/EditProductRequest';
 
 @Injectable()
 export class ProductsService {
@@ -54,8 +54,6 @@ export class ProductsService {
             company: userEntity.company,
         };
 
-        console.log(newProduct);
-
         const product = this.productRepository.create(newProduct);
 
         await this.productRepository.save(product);
@@ -63,16 +61,19 @@ export class ProductsService {
         return product;
     }
 
-    async updateProduct(id: string, request: EditProductRequestDto) {
+    async updateProduct(id: string, productForm: EditProductForm) {
         const product = await this.productRepository.preload({
             id: id,
-            ...request.product,
+            ...productForm,
         });
 
         if (!product) {
             throw new NotFoundException(`Product with id: ${id} not found`);
         }
-        return this.productRepository.save(product);
+
+        await this.productRepository.save(product);
+
+        return product;
     }
 
     async deleteProduct(id: string) {
@@ -80,8 +81,10 @@ export class ProductsService {
     }
 
     async getAllProducts() {
-        return await this.productRepository.find({
+        const products = await this.productRepository.find({
             relations: { images: true, company: true },
         });
+
+        return products;
     }
 }

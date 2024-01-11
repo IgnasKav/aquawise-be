@@ -1,13 +1,7 @@
 import { IsNumber, IsString, ValidateNested } from 'class-validator';
 import { ImageDto } from 'src/images/dto/Image.dto';
-import { ImageEntity } from 'src/images/entities/image.entity';
 
-export class CreateProductRequestDto {
-    userId: string;
-    product: CreateProductForm;
-}
-
-export class CreateProductForm {
+export class EditProductForm {
     @IsString()
     name: string;
 
