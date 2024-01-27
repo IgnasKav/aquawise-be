@@ -6,7 +6,6 @@ import { ClientCreateDto } from './dto/clientCreate.dto';
 import { ClientEntity } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderEntity } from '../orders/entities/order.entity';
 
 @Injectable()
 export class ClientsService {
@@ -40,10 +39,12 @@ export class ClientsService {
                     .database()
                     .ref(`UsersData/${userId}`)
                     .get();
-                const client = new CompanyClient({
+
+                const client: CompanyClient = {
                     email: userAuthDataResp.email,
                     ...userDataResp.val(),
-                });
+                };
+
                 client.devices = await Promise.all(
                     client.devices.map(async (device) => {
                         const fetchedDevice = await admin

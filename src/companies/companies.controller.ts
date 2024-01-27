@@ -2,9 +2,7 @@ import {
     Body,
     Controller,
     Delete,
-    forwardRef,
     Get,
-    Inject,
     Param,
     ParseUUIDPipe,
     Post,
@@ -63,9 +61,9 @@ export class CompaniesController {
 
     @Post('confirm/:applicationId')
     confirmApplication(
-        @Param('applicationId', ParseUUIDPipe) applicationId: string,
+        @Param('applicationId', ParseUUIDPipe) registrationId: string,
     ) {
-        return this.companiesService.confirmApplication(applicationId);
+        return this.companiesService.confirmApplication(registrationId);
     }
 
     @Post()

@@ -25,25 +25,13 @@ export class CompanyEntity {
     brandColor: string;
 
     @Column({ nullable: true })
-    logoUrl: string;
+    logoUrl?: string;
 
     @Column({ nullable: true, unique: true })
-    companyRegistrationId: string;
+    companyRegistrationId?: string;
 
     @OneToMany(() => UserEntity, (user) => user.company)
-    users: UserEntity[];
-
-    constructor(data?: Partial<CompanyEntity>) {
-        this.id = data?.id ?? '';
-        this.name = data?.name ?? '';
-        this.code = data?.code ?? '';
-        this.phone = data?.phone ?? '';
-        this.email = data?.email ?? '';
-        this.status = data?.status ?? CompanyStatus.ApplicationPending;
-        this.brandColor = data?.brandColor ?? null;
-        this.logoUrl = data?.logoUrl ?? null;
-        this.companyRegistrationId = data?.companyRegistrationId ?? null;
-    }
+    users?: UserEntity[];
 }
 
 export enum CompanyStatus {

@@ -4,7 +4,7 @@ import {
 } from '../../src/companies/entities/company.entity';
 
 export const companies: CompanyEntity[] = [
-    new CompanyEntity({
+    {
         id: '1922e9da-bf6b-4637-94a7-25586a4d4240',
         name: 'Kampanija',
         code: '123',
@@ -12,5 +12,5 @@ export const companies: CompanyEntity[] = [
         email: 'company@gmail.com',
         status: CompanyStatus.Confirmed,
         brandColor: 'blue',
-    }),
+    },
 ];

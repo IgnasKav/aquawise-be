@@ -23,15 +23,16 @@ export class MailService {
     }
 
     async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
+        const invitationLink = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
 
         await this.mailerService.sendMail({
             to: company.email,
             subject: 'Your application has been approved!',
             template: 'applicationConfirmation',
             context: {
+                appName: process.env.APP_NAME,
                 companyName: company.name,
-                url,
+                invitationLink,
             },
         });
     }
