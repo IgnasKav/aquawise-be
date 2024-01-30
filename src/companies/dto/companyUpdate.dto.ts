@@ -1,7 +1,8 @@
 import { IsString } from 'class-validator';
+import { ImageDto } from 'src/images/dto/Image.dto';
 
 export class CompanyUpdateDto {
-    image?: Express.Multer.File;
+    image?: ImageDto;
     @IsString()
     brandColor?: string;
 }

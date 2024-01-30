@@ -73,25 +73,13 @@ export class CompaniesController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    @UseInterceptors(
-        FileInterceptor('image', {
-            storage: diskStorage({
-                destination: './dist/images',
-                filename: (req, file, cb) => {
-                    const fileExtension = file.originalname.split('.')[1];
-                    const fileName = `${uuid()}.${fileExtension}`;
-                    cb(null, fileName);
-                },
-            }),
-        }),
-    )
     updateCompany(
         @Param('id', ParseUUIDPipe) id: string,
         @UploadedFile() image: Express.Multer.File | undefined,
         @Body() body: { brandColor: string },
     ) {
         const request: CompanyUpdateDto = {
-            image: image,
+            // image: image,
             brandColor: body.brandColor,
         };
         return this.companiesService.updateCompany(id, request);

@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { ProductEntity } from '../../products/entities/product.entity';
 import { IsString } from 'class-validator';
+import { CompanyEntity } from 'src/companies/entities/company.entity';
 
 @Entity('image')
 export class ImageEntity {
@@ -11,10 +12,15 @@ export class ImageEntity {
     imageUrl: string;
 
     @Column({ nullable: true })
-    productId: string | null;
+    productId?: string;
 
     @ManyToOne(() => ProductEntity, (product) => product.images, {
         nullable: true, // This makes the relation optional
     })
-    product: ProductEntity | null;
+    product?: ProductEntity;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.image, {
+        nullable: true, // This makes the relation optional
+    })
+    company?: CompanyEntity;
 }

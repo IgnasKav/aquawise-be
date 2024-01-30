@@ -98,7 +98,7 @@ export class CompaniesService {
 
     async updateCompany(id: string, request: CompanyUpdateDto) {
         if (request.image) {
-            const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
+            const imageUrl = `${process.env.BE_URL}/${request.image.imageUrl}`;
         }
 
         const company = await this.companyRepository.preload({
