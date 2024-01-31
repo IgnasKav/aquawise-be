@@ -16,9 +16,6 @@ import { CompaniesService } from './companies.service';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { ClientsService } from '../clients/clients.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuid } from 'uuid';
 import { OrdersService } from '../orders/orders.service';
 
 @Controller('')
