@@ -34,11 +34,12 @@ export class SendGridMailService implements IMailService {
     }
 
     async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
+        const invitationLink = `${process.env.FE_URL}/auth/register/companyId=${company.id}`;
 
         const html = this.getHtmlTemplate('applicationConfirmation', {
+            appName: 'Aquawise',
             companyName: company.name,
-            url,
+            invitationLink,
         });
 
         const msg = {

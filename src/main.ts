@@ -6,7 +6,6 @@ import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import * as admin from 'firebase-admin';
 
 async function bootstrap() {
-    console.log('env', process.env);
     const app = await NestFactory.create(AppModule, { cors: true }); // find out how to use specific cors url
 
     app.useGlobalPipes(

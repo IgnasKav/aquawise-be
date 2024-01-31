@@ -23,15 +23,16 @@ export class LocalMailService implements IMailService {
     }
 
     async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
+        const invitationLink = `${process.env.FE_URL}/auth/register/companyId=${company.id}`;
 
         await this.mailerService.sendMail({
             to: company.email,
             subject: 'Your application has been approved!',
             template: 'applicationConfirmation',
             context: {
+                appName: 'Aquawise',
                 companyName: company.name,
-                url,
+                invitationLink,
             },
         });
     }

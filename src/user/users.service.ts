@@ -44,27 +44,6 @@ export class UsersService {
         });
     }
 
-    async registerAdmin(
-        request: RegistrationRequestDto,
-        companyRegistrationId,
-    ) {
-        const company = await this.companiesService.getByRegistrationId(
-            companyRegistrationId,
-        );
-
-        const password = await hash(request.password, 12);
-
-        const newUser = new UserEntity({
-            ...request,
-            id: uuid(),
-            company: company,
-            password: password,
-            role: UserRole.Admin,
-            isRegistered: true,
-        });
-        return this.saveUser(newUser);
-    }
-
     async register(
         request: RegistrationRequestDto,
         userRegistrationId: string,

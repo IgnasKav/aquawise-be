@@ -1,22 +1,23 @@
 import {
     BadRequestException,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
 import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
-import { MailService } from '../mail/mail.service';
+import { IMailService } from 'src/mail/models/IMailService';
 
 @Injectable()
 export class CompaniesService {
     constructor(
         @InjectRepository(CompanyEntity)
         private readonly companyRepository: Repository<CompanyEntity>,
-        private mailService: MailService,
+        @Inject('IMailService') private mailService: IMailService,
     ) {}
 
     async getCompanyById(id: string) {
@@ -32,30 +33,8 @@ export class CompaniesService {
         return company;
     }
 
-    async getByRegistrationId(registrationId: string) {
-        const company = await this.companyRepository.findOne({
-            where: { companyRegistrationId: registrationId },
-        });
-
-        if (!company) {
-            throw new NotFoundException(
-                `Company with registrationId: ${registrationId} not found`,
-            );
-        }
-
-        return company;
-    }
-
-    async confirmApplication(registrationId: string) {
-        const company = await this.companyRepository.findOne({
-            where: { companyRegistrationId: registrationId },
-        });
-
-        if (company == null) {
-            throw new BadRequestException(
-                `No company found for registrationId: ${registrationId}`,
-            );
-        }
+    async confirmApplication(id: string) {
+        const company = await this.getCompanyById(id);
 
         const updatedCompany = await this.companyRepository.preload({
             id: company.id,
@@ -66,7 +45,7 @@ export class CompaniesService {
         return this.companyRepository.save(updatedCompany);
     }
 
-    async createCompany(request: CompanyCreateDto) {
+    async applyForCompanyAccount(request: CompanyCreateDto) {
         const existingCompany = await this.companyRepository.findOne({
             where: [{ name: request.name }, { code: request.code }],
         });
@@ -88,7 +67,6 @@ export class CompaniesService {
         const company = this.companyRepository.create({
             ...request,
             id: uuid(),
-            companyRegistrationId: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
 

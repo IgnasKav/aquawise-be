@@ -45,12 +45,12 @@ export class AuthController {
                 query.userRegistrationId,
             );
         }
-        if (query.companyRegistrationId) {
-            return await this.authService.registerAdmin(
-                request,
-                query.companyRegistrationId,
-            );
-        }
+        // if (query.companyRegistrationId) {
+        //     return await this.authService.registerAdmin(
+        //         request,
+        //         query.companyRegistrationId,
+        //     );
+        // }
         return NotFoundException;
     }
 
@@ -58,11 +58,6 @@ export class AuthController {
     async getByRegistrationId(@Query() query) {
         return this.usersService.findByRegistrationId(query.userRegistrationId);
     }
-
-    // @Get('confirm/:registrationId')
-    // async confirmRegistration(@Param('registrationId') registrationId: string) {
-    //     await this.authService.confirmRegistration(registrationId);
-    // }
 
     @UseGuards(JwtAuthGuard)
     @Get('current')

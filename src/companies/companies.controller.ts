@@ -49,13 +49,6 @@ export class CompaniesController {
         return this.clientsService.getClients(id);
     }
 
-    @Get('/application/:applicationId')
-    getByApplicationId(
-        @Param('applicationId', ParseUUIDPipe) applicationId: string,
-    ) {
-        return this.companiesService.getByRegistrationId(applicationId);
-    }
-
     @Post('confirm/:applicationId')
     confirmApplication(
         @Param('applicationId', ParseUUIDPipe) registrationId: string,
@@ -63,9 +56,9 @@ export class CompaniesController {
         return this.companiesService.confirmApplication(registrationId);
     }
 
-    @Post()
+    @Post('application')
     createCompany(@Body() request: CompanyCreateDto) {
-        return this.companiesService.createCompany(request);
+        return this.companiesService.applyForCompanyAccount(request);
     }
 
     @UseGuards(JwtAuthGuard)

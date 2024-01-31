@@ -1,4 +1,5 @@
 import {
+    Inject,
     Injectable,
     NotFoundException,
     UnauthorizedException,
@@ -7,17 +8,17 @@ import { UsersService } from '../user/users.service';
 import { compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { InvitationRequestDto } from './dto/InvitationRequest.dto';
-import { MailService } from '../mail/mail.service';
 import { LoginRequestDto } from './dto/LoginRequest.dto';
 import { LoginResponseDto } from './dto/LoginResponse.dto';
 import { RegistrationRequestDto } from './dto/RegistrationRequest.dto';
+import { IMailService } from 'src/mail/models/IMailService';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
-        private mailService: MailService,
+        @Inject('IMailService') private mailService: IMailService,
     ) {}
 
     async login(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
@@ -45,21 +46,6 @@ export class AuthService {
     async invite(request: InvitationRequestDto) {
         const createdUser = await this.usersService.inviteUser(request);
         await this.mailService.senUserInvitation(createdUser);
-    }
-
-    async registerAdmin(
-        request: RegistrationRequestDto,
-        companyRegistrationId: string,
-    ) {
-        const user = await this.usersService.registerAdmin(
-            request,
-            companyRegistrationId,
-        );
-        const payload = { username: user.email, sub: user.id };
-        return {
-            jwt: await this.jwtService.signAsync(payload),
-            user: user.toDto(),
-        };
     }
 
     async register(

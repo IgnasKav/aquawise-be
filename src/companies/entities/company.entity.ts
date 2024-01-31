@@ -25,9 +25,6 @@ export class CompanyEntity {
     @Column({ nullable: true })
     brandColor: string;
 
-    @Column({ nullable: true, unique: true })
-    companyRegistrationId?: string;
-
     @OneToMany(() => ImageEntity, (image) => image.company)
     image?: ImageEntity;
 
