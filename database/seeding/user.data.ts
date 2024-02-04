@@ -11,7 +11,7 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        role: UserRole.Support,
+        role: 'support',
     }),
     new UserEntity({
         id: 'f5a81e19-7b52-4f67-8628-8956166d2cb2',
@@ -21,7 +21,7 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        role: UserRole.Admin,
+        role: 'admin',
         company: companies[0],
     }),
     new UserEntity({
@@ -32,7 +32,7 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        role: UserRole.User,
+        role: 'user',
         company: companies[0],
     }),
 ];

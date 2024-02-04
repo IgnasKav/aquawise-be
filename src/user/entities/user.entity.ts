@@ -42,7 +42,7 @@ export class UserEntity {
         this.phone = data?.phone ?? '';
         this.password = data?.password ?? '';
         this.userRegistrationId = data?.userRegistrationId;
-        this.role = data?.role ?? UserRole.User;
+        this.role = data?.role ?? 'user';
         this.company = data?.company;
     }
 
@@ -59,8 +59,4 @@ export class UserEntity {
     }
 }
 
-export enum UserRole {
-    User = 'User',
-    Admin = 'Admin',
-    Support = 'Support',
-}
+export type UserRole = 'user' | 'admin' | 'support';

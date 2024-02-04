@@ -1,11 +1,11 @@
-import { IsEmail, IsEnum, IsString } from 'class-validator';
-import { UserRole } from '../../user/entities/user.entity';
+import { IsEmail, IsEnum, IsIn, IsString } from 'class-validator';
+import { UserRole } from 'src/user/entities/user.entity';
 
 export class InvitationRequestDto {
     @IsEmail()
     email: string;
 
-    @IsEnum(UserRole)
+    @IsString()
     role: UserRole;
 
     @IsString()

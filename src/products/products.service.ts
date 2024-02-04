@@ -8,16 +8,14 @@ import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductRequestDto } from './dto/CreateProductRequest';
 import { UsersService } from '../user/users.service';
-import { ImageEntity } from '../images/entities/image.entity';
 import { EditProductForm } from './dto/EditProductRequest';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
-        @InjectRepository(ImageEntity)
-        private productImageRepository: Repository<ImageEntity>,
         private usersService: UsersService,
     ) {}
 
@@ -61,14 +59,27 @@ export class ProductsService {
         return product;
     }
 
-    async updateProduct(id: string, productForm: EditProductForm) {
-        const product = await this.productRepository.preload({
-            id: id,
-            ...productForm,
+    // user and admin should only be able to see products from their company
+    // support should be able to see all products
+
+    async updateProduct(
+        id: string,
+        productForm: EditProductForm,
+        user: UserEntity,
+    ) {
+        const product = await this.productRepository.findOne({
+            where: { id: id },
+            relations: { company: true },
         });
 
         if (!product) {
             throw new NotFoundException(`Product with id: ${id} not found`);
+        }
+
+        if (product.company.id !== user.company.id) {
+            throw new ForbiddenException(
+                'You are not allowed to update products from other companies',
+            );
         }
 
         await this.productRepository.save(product);

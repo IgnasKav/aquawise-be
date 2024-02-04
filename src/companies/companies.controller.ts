@@ -10,12 +10,14 @@ import {
     UploadedFile,
     UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/decorators/jwt.decorator';
 import { CompaniesService } from './companies.service';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { ClientsService } from '../clients/clients.service';
 import { OrdersService } from '../orders/orders.service';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Role } from 'src/auth/decorators/role.decorator';
 
 @Controller('')
 export class CompaniesController {
@@ -25,15 +27,11 @@ export class CompaniesController {
         private readonly ordersService: OrdersService,
     ) {}
 
-    @UseGuards(JwtAuthGuard)
+    @Role('support')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @Get()
     getAll() {
         return this.companiesService.getAllCompanies();
-    }
-
-    @Get(':id')
-    getById(@Param('id', ParseUUIDPipe) id: string) {
-        return this.companiesService.getCompanyById(id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -48,6 +46,8 @@ export class CompaniesController {
         return this.clientsService.getClients(id);
     }
 
+    @Role('support')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @Post('confirm/:applicationId')
     confirmApplication(
         @Param('applicationId', ParseUUIDPipe) registrationId: string,
@@ -71,11 +71,5 @@ export class CompaniesController {
             brandColor: body.brandColor,
         };
         return this.companiesService.updateCompany(id, request);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete(':id')
-    deleteCompany(@Param('id', ParseUUIDPipe) id: string) {
-        return this.companiesService.deleteCompany(id);
     }
 }

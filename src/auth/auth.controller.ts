@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { InvitationRequestDto } from './dto/InvitationRequest.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './decorators/jwt.decorator';
 import { LoginRequestDto } from './dto/LoginRequest.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { UserRegistrationRequestDto } from './dto/RegistrationRequest.dto';

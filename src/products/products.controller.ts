@@ -8,16 +8,20 @@ import {
     Post,
     Put,
     Request,
+    UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/decorators/jwt.decorator';
 import { ProductsService } from './products.service';
 import {
     CreateProductForm,
     CreateProductRequestDto,
 } from './dto/CreateProductRequest';
 import { EditProductForm } from './dto/EditProductRequest';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Role } from 'src/auth/decorators/role.decorator';
 
 @Controller('products')
+@UseGuards(JwtAuthGuard)
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
@@ -32,6 +36,8 @@ export class ProductsController {
     }
 
     @Post()
+    @Role('admin')
+    @UseGuards(RoleGuard)
     createProduct(@Body() body: CreateProductForm, @Request() req) {
         const userId = req.userId;
         const request: CreateProductRequestDto = {
@@ -43,14 +49,19 @@ export class ProductsController {
     }
 
     @Put(':id')
+    @Role(['admin', 'support'])
+    @UseGuards(RoleGuard)
     updateProduct(
         @Param('id', ParseUUIDPipe) id: string,
         @Body() body: EditProductForm,
+        @Request() req,
     ) {
-        return this.productsService.updateProduct(id, body);
+        return this.productsService.updateProduct(id, body, req.user);
     }
 
     @Delete(':id')
+    @Role(['admin', 'support'])
+    @UseGuards(RoleGuard)
     deleteProduct(@Param('id', ParseUUIDPipe) id: string) {
         return this.productsService.deleteProduct(id);
     }

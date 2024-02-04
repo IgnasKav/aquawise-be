@@ -11,8 +11,7 @@ import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
-import { UserEntity, UserRole } from 'src/user/entities/user.entity';
-
+import { UserEntity } from 'src/user/entities/user.entity';
 @Injectable()
 export class CompaniesService {
     constructor(
@@ -22,19 +21,6 @@ export class CompaniesService {
         private readonly userRepository: Repository<UserEntity>,
         @Inject('IMailService') private mailService: IMailService,
     ) {}
-
-    async getCompanyById(id: string) {
-        const company = await this.companyRepository.findOne({
-            where: { id: id },
-            relations: { users: true },
-        });
-
-        if (!company) {
-            throw new NotFoundException(`Company with id: ${id} not found`);
-        }
-
-        return company;
-    }
 
     async confirmApplication(id: string) {
         const company = await this.companyRepository.findOne({
@@ -57,7 +43,7 @@ export class CompaniesService {
             firstName: `${company.name} Admin`,
             lastName: '',
             password: '',
-            role: UserRole.Admin,
+            role: 'admin',
             company: company,
             userRegistrationId: uuid(),
         });
@@ -132,11 +118,6 @@ export class CompaniesService {
             throw new NotFoundException(`Company with id: ${id} not found`);
         }
         return this.companyRepository.save(company);
-    }
-
-    async deleteCompany(id: string) {
-        const company = await this.getCompanyById(id);
-        //return this.companyRepository.delete();
     }
 
     async getAllCompanies() {
