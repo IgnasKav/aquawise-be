@@ -9,7 +9,6 @@ import {
     Put,
     UploadedFile,
     UseGuards,
-    UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CompaniesService } from './companies.service';
@@ -57,7 +56,7 @@ export class CompaniesController {
     }
 
     @Post('application')
-    createCompany(@Body() request: CompanyCreateDto) {
+    applyForCompanyAccount(@Body() request: CompanyCreateDto) {
         return this.companiesService.applyForCompanyAccount(request);
     }
 
@@ -69,7 +68,6 @@ export class CompaniesController {
         @Body() body: { brandColor: string },
     ) {
         const request: CompanyUpdateDto = {
-            // image: image,
             brandColor: body.brandColor,
         };
         return this.companiesService.updateCompany(id, request);

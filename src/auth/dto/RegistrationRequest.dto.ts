@@ -1,7 +1,7 @@
-import { IsEmail, IsEnum, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
 import { UserRole } from '../../user/entities/user.entity';
 
-export class RegistrationRequestDto {
+export class UserRegistrationRequestDto {
     @IsString()
     firstName: string;
 
@@ -16,4 +16,7 @@ export class RegistrationRequestDto {
 
     @IsString()
     password: string;
+
+    @IsUUID()
+    registrationId: string;
 }

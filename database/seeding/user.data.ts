@@ -11,7 +11,6 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        isRegistered: true,
         role: UserRole.Support,
     }),
     new UserEntity({
@@ -22,7 +21,6 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        isRegistered: true,
         role: UserRole.Admin,
         company: companies[0],
     }),
@@ -34,7 +32,6 @@ export const users: UserEntity[] = [
         phone: '+37065289846',
         password: 'zzz123',
         userRegistrationId: uuid(),
-        isRegistered: true,
         role: UserRole.User,
         company: companies[0],
     }),

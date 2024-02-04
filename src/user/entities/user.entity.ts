@@ -29,9 +29,6 @@ export class UserEntity {
     userRegistrationId: string;
 
     @Column()
-    isRegistered: boolean;
-
-    @Column()
     role: UserRole;
 
     @ManyToOne(() => CompanyEntity, { nullable: true })
@@ -45,7 +42,6 @@ export class UserEntity {
         this.phone = data?.phone ?? '';
         this.password = data?.password ?? '';
         this.userRegistrationId = data?.userRegistrationId;
-        this.isRegistered = data?.isRegistered ?? false;
         this.role = data?.role ?? UserRole.User;
         this.company = data?.company;
     }

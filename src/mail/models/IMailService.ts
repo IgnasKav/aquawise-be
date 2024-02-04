@@ -3,5 +3,8 @@ import { UserEntity } from 'src/user/entities/user.entity';
 
 export interface IMailService {
     senUserInvitation(user: UserEntity): Promise<void>;
-    sendApplicationConfirmation(company: CompanyEntity): Promise<void>;
+    sendApplicationConfirmation(
+        company: CompanyEntity,
+        user: UserEntity,
+    ): Promise<void>;
 }
