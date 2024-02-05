@@ -6,17 +6,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { CreateProductRequestDto } from './dto/CreateProductRequest';
-import { UsersService } from '../user/users.service';
 import { EditProductForm } from './dto/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
+import checkPermission from 'src/utils/permission-check';
+import { CreateProductForm } from './dto/CreateProductRequest';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
-        private usersService: UsersService,
     ) {}
 
     async getProductById(id: string) {
@@ -32,27 +31,11 @@ export class ProductsService {
         return product;
     }
 
-    async createProduct(request: CreateProductRequestDto) {
-        const userEntity = await this.usersService.findById(request.userId);
-
-        if (!userEntity) {
-            throw new NotFoundException(
-                `User with id: ${request.userId} not found`,
-            );
-        }
-
-        if (!userEntity.company) {
-            throw new ForbiddenException(
-                'Only users that belong to a company can create products',
-            );
-        }
-
-        const newProduct = {
-            ...request.product,
-            company: userEntity.company,
-        };
-
-        const product = this.productRepository.create(newProduct);
+    async createProduct(productForm: CreateProductForm, user: UserEntity) {
+        const product = this.productRepository.create({
+            ...productForm,
+            company: user.company,
+        });
 
         await this.productRepository.save(product);
 
@@ -76,18 +59,35 @@ export class ProductsService {
             throw new NotFoundException(`Product with id: ${id} not found`);
         }
 
+        checkPermission(product, user);
+
         if (product.company.id !== user.company.id) {
             throw new ForbiddenException(
                 'You are not allowed to update products from other companies',
             );
         }
 
+        product.name = productForm.name;
+        product.quantity = productForm.quantity;
+        product.price = productForm.price;
+        product.images = productForm.images;
+
         await this.productRepository.save(product);
 
         return product;
     }
 
-    async deleteProduct(id: string) {
+    async deleteProduct(id: string, user: UserEntity) {
+        const product = await this.productRepository.findOne({
+            where: { id: id },
+        });
+
+        if (!product) {
+            throw new NotFoundException(`Product with id: ${id} not found`);
+        }
+
+        checkPermission(product, user);
+
         return this.productRepository.delete(id);
     }
 

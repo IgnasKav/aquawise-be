@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
-import { CompanyUpdateDto } from './dto/companyUpdate.dto';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
@@ -21,38 +20,6 @@ export class CompaniesService {
         private readonly userRepository: Repository<UserEntity>,
         @Inject('IMailService') private mailService: IMailService,
     ) {}
-
-    async confirmApplication(id: string) {
-        const company = await this.companyRepository.findOne({
-            where: { id: id },
-        });
-
-        if (!company) {
-            throw new NotFoundException(`Company with id: ${id} not found`);
-        }
-
-        if (company.status === CompanyStatus.Confirmed) {
-            return;
-        }
-
-        company.status = CompanyStatus.Confirmed;
-
-        const adminUser = await this.userRepository.create({
-            id: uuid(),
-            email: company.email,
-            firstName: `${company.name} Admin`,
-            lastName: '',
-            password: '',
-            role: 'admin',
-            company: company,
-            userRegistrationId: uuid(),
-        });
-
-        await this.mailService.sendApplicationConfirmation(company, adminUser);
-
-        await this.companyRepository.save(company);
-        await this.userRepository.save(adminUser);
-    }
 
     async applyForCompanyAccount(request: CompanyCreateDto) {
         const userWithSameEmail = await this.userRepository.findOne({
@@ -103,21 +70,38 @@ export class CompaniesService {
         return company;
     }
 
-    async updateCompany(id: string, request: CompanyUpdateDto) {
-        if (request.image) {
-            const imageUrl = `${process.env.BE_URL}/${request.image.imageUrl}`;
-        }
+    // support
 
-        const company = await this.companyRepository.preload({
-            id: id,
-            brandColor: request.brandColor,
-            ...request,
+    async confirmApplication(id: string) {
+        const company = await this.companyRepository.findOne({
+            where: { id: id },
         });
 
         if (!company) {
             throw new NotFoundException(`Company with id: ${id} not found`);
         }
-        return this.companyRepository.save(company);
+
+        if (company.status === CompanyStatus.Confirmed) {
+            return;
+        }
+
+        company.status = CompanyStatus.Confirmed;
+
+        const adminUser = await this.userRepository.create({
+            id: uuid(),
+            email: company.email,
+            firstName: `${company.name} Admin`,
+            lastName: '',
+            password: '',
+            role: 'admin',
+            company: company,
+            userRegistrationId: uuid(),
+        });
+
+        await this.mailService.sendApplicationConfirmation(company, adminUser);
+
+        await this.companyRepository.save(company);
+        await this.userRepository.save(adminUser);
     }
 
     async getAllCompanies() {
