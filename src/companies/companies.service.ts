@@ -5,12 +5,14 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
 import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { users } from 'database/seeding/user.data';
+import { Exception } from 'handlebars';
 @Injectable()
 export class CompaniesService {
     constructor(
@@ -19,6 +21,7 @@ export class CompaniesService {
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
         @Inject('IMailService') private mailService: IMailService,
+        private dataSource: DataSource,
     ) {}
 
     async applyForCompanyAccount(request: CompanyCreateDto) {
@@ -98,10 +101,31 @@ export class CompaniesService {
             userRegistrationId: uuid(),
         });
 
-        await this.mailService.sendApplicationConfirmation(company, adminUser);
+        const queryRunner = this.dataSource.createQueryRunner();
 
-        await this.companyRepository.save(company);
-        await this.userRepository.save(adminUser);
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.manager.save(company);
+            await queryRunner.manager.save(users);
+
+            await this.companyRepository.save(company);
+            await this.userRepository.save(adminUser);
+
+            await queryRunner.commitTransaction();
+            await this.mailService.sendApplicationConfirmation(
+                company,
+                adminUser,
+            );
+        } catch (err) {
+            // since we have errors lets rollback the changes we madegr
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            // you need to release a queryRunner which was manually instantiated
+            await queryRunner.release();
+        }
     }
 
     async getAllCompanies() {

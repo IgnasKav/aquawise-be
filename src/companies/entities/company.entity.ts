@@ -7,16 +7,16 @@ export class CompanyEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ unique: true })
     name: string;
 
-    @Column()
+    @Column({ unique: true })
     code: string;
 
     @Column()
     phone: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
