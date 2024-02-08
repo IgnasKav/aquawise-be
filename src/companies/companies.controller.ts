@@ -32,11 +32,11 @@ export class CompaniesController {
         return this.companiesService.getAllCompanies();
     }
 
-    @Post('confirm/:applicationId')
+    @Post('confirm/:registrationId')
     @Role('support')
     @UseGuards(JwtAuthGuard, RoleGuard)
     confirmApplication(
-        @Param('applicationId', ParseUUIDPipe) registrationId: string,
+        @Param('registrationId', ParseUUIDPipe) registrationId: string,
     ) {
         return this.companiesService.confirmApplication(registrationId);
     }

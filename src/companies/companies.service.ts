@@ -3,6 +3,7 @@ import {
     Inject,
     Injectable,
     NotFoundException,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -11,8 +12,6 @@ import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { users } from 'database/seeding/user.data';
-import { Exception } from 'handlebars';
 @Injectable()
 export class CompaniesService {
     constructor(
@@ -20,7 +19,8 @@ export class CompaniesService {
         private readonly companyRepository: Repository<CompanyEntity>,
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        @Inject('IMailService') private mailService: IMailService,
+        @Inject('IMailService')
+        private mailService: IMailService,
         private dataSource: DataSource,
     ) {}
 
@@ -105,21 +105,18 @@ export class CompaniesService {
 
         await queryRunner.connect();
         await queryRunner.startTransaction();
-
         try {
             await queryRunner.manager.save(company);
-            await queryRunner.manager.save(users);
+            await queryRunner.manager.save(adminUser);
 
-            await this.companyRepository.save(company);
-            await this.userRepository.save(adminUser);
-
-            await queryRunner.commitTransaction();
             await this.mailService.sendApplicationConfirmation(
                 company,
                 adminUser,
             );
+
+            await queryRunner.commitTransaction();
         } catch (err) {
-            // since we have errors lets rollback the changes we madegr
+            // since we have errors lets rollback the changes we made
             await queryRunner.rollbackTransaction();
             throw err;
         } finally {
