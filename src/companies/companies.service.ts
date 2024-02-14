@@ -3,7 +3,6 @@ import {
     Inject,
     Injectable,
     NotFoundException,
-    UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -12,6 +11,8 @@ import { CompanyCreateDto } from './dto/companyCreate.dto';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
+import transactionRunner from 'src/common/db-transaction-runner';
+
 @Injectable()
 export class CompaniesService {
     constructor(
@@ -101,11 +102,7 @@ export class CompaniesService {
             userRegistrationId: uuid(),
         });
 
-        const queryRunner = this.dataSource.createQueryRunner();
-
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-        try {
+        await transactionRunner(this.dataSource, async (queryRunner) => {
             await queryRunner.manager.save(company);
             await queryRunner.manager.save(adminUser);
 
@@ -113,16 +110,7 @@ export class CompaniesService {
                 company,
                 adminUser,
             );
-
-            await queryRunner.commitTransaction();
-        } catch (err) {
-            // since we have errors lets rollback the changes we made
-            await queryRunner.rollbackTransaction();
-            throw err;
-        } finally {
-            // you need to release a queryRunner which was manually instantiated
-            await queryRunner.release();
-        }
+        });
     }
 
     async getAllCompanies() {

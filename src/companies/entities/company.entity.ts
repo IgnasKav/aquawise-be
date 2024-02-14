@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { ImageEntity } from 'src/images/entities/image.entity';
+import { ProductEntity } from 'src/products/entities/product.entity';
 
 @Entity('company')
 export class CompanyEntity {
@@ -26,10 +27,13 @@ export class CompanyEntity {
     brandColor: string;
 
     @OneToMany(() => ImageEntity, (image) => image.company)
-    image?: ImageEntity;
+    images?: ImageEntity[];
 
     @OneToMany(() => UserEntity, (user) => user.company)
     users?: UserEntity[];
+
+    @OneToMany(() => ProductEntity, (product) => product.company)
+    products?: ProductEntity[];
 }
 
 export enum CompanyStatus {

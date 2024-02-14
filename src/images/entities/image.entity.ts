@@ -19,8 +19,9 @@ export class ImageEntity {
     })
     product?: ProductEntity;
 
-    @ManyToOne(() => CompanyEntity, (company) => company.image, {
-        nullable: true, // This makes the relation optional
-    })
-    company?: CompanyEntity;
+    @Column()
+    companyId: string;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.images)
+    company: CompanyEntity;
 }

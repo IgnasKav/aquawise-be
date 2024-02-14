@@ -36,7 +36,7 @@ export class ProductsController {
     // company admin and support
 
     @Post()
-    @Role('admin')
+    @Role(['admin', 'support'])
     @UseGuards(JwtAuthGuard, RoleGuard)
     createProduct(@Body() body: CreateProductForm, @Request() req) {
         return this.productsService.createProduct(body, req.user);

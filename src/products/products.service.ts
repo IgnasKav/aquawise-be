@@ -10,12 +10,14 @@ import { EditProductForm } from './dto/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
 import checkPermission from 'src/utils/permission-check';
 import { CreateProductForm } from './dto/CreateProductRequest';
+import { ProductUpdateService } from './crud/product-update.service';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
+        private productUpdateService: ProductUpdateService,
     ) {}
 
     async getProductById(id: string) {
@@ -42,40 +44,16 @@ export class ProductsService {
         return product;
     }
 
-    // user and admin should only be able to see products from their company
-    // support should be able to see all products
-
     async updateProduct(
         id: string,
         productForm: EditProductForm,
         user: UserEntity,
     ) {
-        const product = await this.productRepository.findOne({
-            where: { id: id },
-            relations: { company: true },
-        });
-
-        if (!product) {
-            throw new NotFoundException(`Product with id: ${id} not found`);
-        }
-
-        checkPermission(product, user);
-
-        if (product.company.id !== user.company.id) {
-            throw new ForbiddenException(
-                'You are not allowed to update products from other companies',
-            );
-        }
-
-        product.name = productForm.name;
-        product.quantity = productForm.quantity;
-        product.price = productForm.price;
-        product.images = productForm.images;
-
-        await this.productRepository.save(product);
-
-        return product;
+        return this.productUpdateService.updateProduct(id, productForm, user);
     }
+
+    // user and admin should only be able to see products from their company
+    // support should be able to see all products
 
     async deleteProduct(id: string, user: UserEntity) {
         const product = await this.productRepository.findOne({

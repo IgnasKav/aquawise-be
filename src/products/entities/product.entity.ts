@@ -1,7 +1,6 @@
 import {
     Column,
     Entity,
-    JoinColumn,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -28,6 +27,9 @@ export class ProductEntity {
     })
     images: ImageEntity[];
 
-    @ManyToOne(() => CompanyEntity, { nullable: true })
+    @Column()
+    companyId: string;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.products)
     company: CompanyEntity;
 }

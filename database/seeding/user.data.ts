@@ -12,6 +12,7 @@ export const users: UserEntity[] = [
         password: 'zzz123',
         userRegistrationId: uuid(),
         role: 'support',
+        company: companies[0],
     }),
     new UserEntity({
         id: 'f5a81e19-7b52-4f67-8628-8956166d2cb2',

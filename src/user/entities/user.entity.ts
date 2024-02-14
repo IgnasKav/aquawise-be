@@ -37,8 +37,11 @@ export class UserEntity {
     @Column()
     role: UserRole;
 
-    @ManyToOne(() => CompanyEntity, { nullable: true })
-    company?: CompanyEntity;
+    @Column()
+    companyId: string;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.users)
+    company: CompanyEntity;
 
     constructor(data?: Partial<UserEntity>) {
         this.id = data?.id ?? '';

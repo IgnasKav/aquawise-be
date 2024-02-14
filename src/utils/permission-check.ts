@@ -2,11 +2,14 @@ import { ForbiddenException } from '@nestjs/common';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 
-type CompanyEntity = {
+type EntityWithCompany = {
     company: { id: string };
 };
 
-const checkPermission = (entity: CompanyEntity, user: UserEntity | UserDto) => {
+const checkPermission = (
+    entity: EntityWithCompany,
+    user: UserEntity | UserDto,
+) => {
     if (user.role === 'support') {
         return;
     }

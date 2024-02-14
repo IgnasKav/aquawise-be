@@ -4,8 +4,11 @@ import { Repository } from 'typeorm';
 import { ImageEntity } from './entities/image.entity';
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
-import { ImageDeleteRequest } from './dto/ImageDeleteRequest';
+import { ImagesDeleteRequest } from './dto/ImageDeleteRequest';
 import { promisify } from 'util';
+import checkPermission from 'src/utils/permission-check';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { ImageDto } from './dto/Image.dto';
 
 @Injectable()
 export class ImagesService {
@@ -14,39 +17,57 @@ export class ImagesService {
         private imageRepo: Repository<ImageEntity>,
     ) {}
 
-    async saveImages(images: Express.Multer.File[]): Promise<ImageEntity[]> {
-        const productImages: ImageEntity[] = [];
+    // find users company, if user has no company dont save
+    async saveImages(
+        images: Express.Multer.File[],
+        user: UserEntity,
+    ): Promise<ImageEntity[]> {
+        const imageEntities: ImageEntity[] = [];
 
         for (const image of images) {
             image.filename = `${uuid()}.png`;
             const path = `./images/${image.filename}`;
             fs.writeFileSync(path, image.buffer);
 
-            const productImage = this.imageRepo.create({
+            const imageEntity: ImageEntity = {
+                id: uuid(),
                 imageUrl: image.filename,
-            });
+                companyId: user.companyId,
+                company: user.company,
+            };
 
-            productImages.push(productImage);
+            imageEntities.push(imageEntity);
         }
 
-        const res = await this.imageRepo.save(productImages);
+        const res = await this.imageRepo.save(imageEntities);
         return res;
     }
 
-    async deleteImages(req: ImageDeleteRequest) {
-        const unlinkAsync = promisify(fs.unlink);
+    async deleteImages(req: ImagesDeleteRequest, user: UserEntity) {
+        for (const image of req.images) {
+            await this.deleteImage(image.id, user);
+        }
+    }
 
-        const imageIds = req.images.map((x) => x.id);
-
-        const deleteFromFileSystemPromises = req.images.map(async (image) => {
-            const path = `./images/${image.imageUrl}`;
-
-            return unlinkAsync(path);
+    // allow only the user from image company to delete
+    async deleteImage(imageId: string, user: UserEntity) {
+        const imageEntity = await this.imageRepo.findOne({
+            where: { id: imageId },
         });
 
+        if (!imageEntity) return;
+
+        checkPermission(imageEntity, user);
+
+        const deleteImageFromDisk = async () => {
+            const unlinkAsync = promisify(fs.unlink);
+            const path = `./images/${imageEntity.imageUrl}`;
+            await unlinkAsync(path);
+        };
+
         try {
-            await Promise.all(deleteFromFileSystemPromises);
-            await this.imageRepo.delete(imageIds);
+            await deleteImageFromDisk();
+            await this.imageRepo.delete(imageEntity.id);
         } catch (e) {
             throw new NotFoundException(
                 `Images couldn't be deleted ${e.message}`,
