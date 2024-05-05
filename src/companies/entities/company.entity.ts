@@ -44,7 +44,6 @@ export class CompanyEntity {
     products?: ProductEntity[];
 
     @ManyToMany(() => ClientEntity, (client) => client.companies)
-    @JoinTable()
     clients?: ClientEntity[];
 }
 
