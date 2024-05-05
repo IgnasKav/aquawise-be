@@ -1,7 +1,7 @@
 import { createDataSourceOptions } from '../data-source';
 import { UserEntity } from '../../src/user/entities/user.entity';
-import { users as usersData } from './user.data';
-import { companies } from './company.data';
+import { users as usersData } from './data/user.data';
+import { companies } from './data/company.data';
 import { hash } from 'bcryptjs';
 import { CompanyEntity } from '../../src/companies/entities/company.entity';
 import { DataSource } from 'typeorm';

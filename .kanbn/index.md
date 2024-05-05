@@ -11,7 +11,7 @@ completedColumns:
 
 ## Todo
 
-- [image-testing](tasks/image-testing.md)
+- [testing](tasks/testing.md)
 
 ## In Progress
 

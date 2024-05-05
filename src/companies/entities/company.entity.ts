@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinTable,
+    ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { ImageEntity } from 'src/images/entities/image.entity';
 import { ProductEntity } from 'src/products/entities/product.entity';
+import { ClientEntity } from 'src/clients/entities/client.entity';
 
 @Entity('company')
 export class CompanyEntity {
@@ -34,6 +42,10 @@ export class CompanyEntity {
 
     @OneToMany(() => ProductEntity, (product) => product.company)
     products?: ProductEntity[];
+
+    @ManyToMany(() => ClientEntity, (client) => client.companies)
+    @JoinTable()
+    clients?: ClientEntity[];
 }
 
 export enum CompanyStatus {

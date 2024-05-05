@@ -1,4 +1,4 @@
-import { UserEntity, UserRole } from '../../src/user/entities/user.entity';
+import { UserEntity, UserRole } from '../../../src/user/entities/user.entity';
 import { v4 as uuid } from 'uuid';
 import { companies } from './company.data';
 

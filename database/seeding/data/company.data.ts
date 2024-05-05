@@ -1,7 +1,7 @@
 import {
     CompanyEntity,
     CompanyStatus,
-} from '../../src/companies/entities/company.entity';
+} from '../../../src/companies/entities/company.entity';
 
 export const companies: CompanyEntity[] = [
     {
