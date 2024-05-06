@@ -24,28 +24,11 @@ import { ImagesModule } from './images/images.module';
         UsersModule,
         ProductsModule,
         CompaniesModule,
-        OrdersModule,
         ClientsModule,
+        OrdersModule,
         MailModule,
         ImagesModule,
-        RouterModule.register([
-            {
-                path: 'companies',
-                module: CompaniesModule,
-                children: [
-                    {
-                        path: ':companyId/clients',
-                        module: ClientsModule,
-                        children: [
-                            {
-                                path: ':clientId/orders',
-                                module: OrdersModule,
-                            },
-                        ],
-                    },
-                ],
-            },
-        ]),
+        RouterModule.register([]),
     ],
     controllers: [],
     providers: [],

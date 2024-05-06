@@ -12,12 +12,6 @@ import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
 import transactionRunner from 'src/common/db-transaction-runner';
-import {
-    GetCompanyClientsRequest,
-    GetCompanyClientsResponse,
-} from './models/GetCompanyClientsRequest';
-import { CompanyClientRelationEntity } from './entities/company-client-relation.entity';
-import { ClientEntity } from 'src/clients/entities/client.entity';
 
 @Injectable()
 export class CompaniesService {
@@ -26,8 +20,6 @@ export class CompaniesService {
         private readonly companyRepo: Repository<CompanyEntity>,
         @InjectRepository(UserEntity)
         private readonly userRepo: Repository<UserEntity>,
-        @InjectRepository(ClientEntity)
-        private readonly clientRepo: Repository<ClientEntity>,
         @Inject('IMailService')
         private mailService: IMailService,
         private dataSource: DataSource,
@@ -80,33 +72,6 @@ export class CompaniesService {
 
         await this.companyRepo.save(company);
         return company;
-    }
-
-    async getCompanyClients({
-        companyId,
-        page,
-        pageSize,
-    }: GetCompanyClientsRequest): Promise<GetCompanyClientsResponse> {
-        const [relations, total] = await this.dataSource
-            .getRepository(CompanyClientRelationEntity)
-            .createQueryBuilder('relation')
-            .where('relation.companyId = :companyId', { companyId })
-            .skip((page - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
-
-        const clientIds = relations.map((r) => r.clientId);
-
-        const clients = await this.clientRepo.findBy({
-            id: In(clientIds),
-        });
-
-        return {
-            total,
-            page,
-            pageSize,
-            data: clients,
-        };
     }
 
     // support

@@ -12,7 +12,6 @@ import { CompaniesService } from './companies.service';
 import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorators/role.decorator';
-import { GetCompanyClientsRequest } from './models/GetCompanyClientsRequest';
 
 @Controller('')
 export class CompaniesController {
@@ -22,11 +21,6 @@ export class CompaniesController {
     @Post('application')
     applyForCompanyAccount(@Body() request: CompanyCreateRequest) {
         return this.companiesService.applyForCompanyAccount(request);
-    }
-
-    @Post('clients')
-    getCompanyClients(@Body() request: GetCompanyClientsRequest) {
-        return this.companiesService.getCompanyClients(request);
     }
 
     // support
