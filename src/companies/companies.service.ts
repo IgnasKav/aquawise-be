@@ -5,7 +5,7 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
 import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { v4 as uuid } from 'uuid';
@@ -13,22 +13,25 @@ import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
 import transactionRunner from 'src/common/db-transaction-runner';
 import { GetCompanyClientsRequest } from './models/GetCompanyClientsRequest';
+import { CompanyClientRelationEntity } from './entities/company-client-relation.entity';
 import { ClientEntity } from 'src/clients/entities/client.entity';
 
 @Injectable()
 export class CompaniesService {
     constructor(
         @InjectRepository(CompanyEntity)
-        private readonly companyRepository: Repository<CompanyEntity>,
+        private readonly companyRepo: Repository<CompanyEntity>,
         @InjectRepository(UserEntity)
-        private readonly userRepository: Repository<UserEntity>,
+        private readonly userRepo: Repository<UserEntity>,
+        @InjectRepository(ClientEntity)
+        private readonly clientRepo: Repository<ClientEntity>,
         @Inject('IMailService')
         private mailService: IMailService,
         private dataSource: DataSource,
     ) {}
 
     async applyForCompanyAccount(request: CompanyCreateRequest) {
-        const userWithSameEmail = await this.userRepository.findOne({
+        const userWithSameEmail = await this.userRepo.findOne({
             where: { email: request.email },
         });
 
@@ -38,7 +41,7 @@ export class CompaniesService {
             );
         }
 
-        const existingCompany = await this.companyRepository.findOne({
+        const existingCompany = await this.companyRepo.findOne({
             where: [
                 { name: request.name },
                 { code: request.code },
@@ -66,35 +69,42 @@ export class CompaniesService {
             }
         }
 
-        const company = this.companyRepository.create({
+        const company = this.companyRepo.create({
             ...request,
             id: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
 
-        await this.companyRepository.save(company);
+        await this.companyRepo.save(company);
         return company;
     }
 
     async getCompanyClients({
         companyId,
-    }: GetCompanyClientsRequest): Promise<ClientEntity[]> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                id: companyId,
-            },
-            relations: {
-                clients: true,
-            },
+        page,
+        size,
+    }: GetCompanyClientsRequest) {
+        const [relations, total] = await this.dataSource
+            .getRepository(CompanyClientRelationEntity)
+            .createQueryBuilder('relation')
+            .where('relation.companyId = :companyId', { companyId })
+            .skip((page - 1) * size)
+            .take(size)
+            .getManyAndCount();
+
+        const clientIds = relations.map((r) => r.clientId);
+
+        const clients = await this.clientRepo.findBy({
+            id: In(clientIds),
         });
 
-        return company.clients;
+        return clients;
     }
 
     // support
 
     async confirmApplication(id: string) {
-        const company = await this.companyRepository.findOne({
+        const company = await this.companyRepo.findOne({
             where: { id: id },
         });
 
@@ -108,7 +118,7 @@ export class CompaniesService {
 
         company.status = CompanyStatus.Confirmed;
 
-        const adminUser = await this.userRepository.create({
+        const adminUser = await this.userRepo.create({
             id: uuid(),
             email: company.email,
             firstName: `${company.name} Admin`,
@@ -131,6 +141,6 @@ export class CompaniesService {
     }
 
     async getAllCompanies() {
-        return await this.companyRepository.find();
+        return await this.companyRepo.find();
     }
 }

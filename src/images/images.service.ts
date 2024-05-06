@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
 import { ImagesDeleteRequest } from './dto/ImageDeleteRequest';
 import { promisify } from 'util';
-import checkPermission from 'src/utils/permission-check';
+import checkPermission from 'src/common/permission-check';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ImageDto } from './dto/Image.dto';
 

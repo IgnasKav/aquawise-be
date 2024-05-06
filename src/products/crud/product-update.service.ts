@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ImageEntity } from 'src/images/entities/image.entity';
 import { EditProductForm } from '../dto/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
-import checkPermission from 'src/utils/permission-check';
+import checkPermission from 'src/common/permission-check';
 
 @Injectable()
 export class ProductUpdateService {

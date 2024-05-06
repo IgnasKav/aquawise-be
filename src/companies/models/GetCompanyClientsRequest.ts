@@ -1,15 +1,7 @@
-import { IsNumber, IsUUID, Max, Min } from 'class-validator';
+import { IsUUID } from 'class-validator';
+import { SearchRequest } from 'src/common/models/SearchRequest';
 
-export class GetCompanyClientsRequest {
+export class GetCompanyClientsRequest extends SearchRequest {
     @IsUUID()
     companyId: string;
-
-    @IsNumber()
-    @Min(0)
-    from: number;
-
-    @IsNumber()
-    @Min(0)
-    @Max(100)
-    size: number;
 }

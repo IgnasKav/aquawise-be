@@ -1,12 +1,5 @@
-import {
-    Column,
-    Entity,
-    JoinTable,
-    ManyToMany,
-    ManyToOne,
-    PrimaryColumn,
-} from 'typeorm';
-import { CompanyEntity } from '../../companies/entities/company.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
 
 @Entity('client')
 export class ClientEntity {
@@ -28,10 +21,6 @@ export class ClientEntity {
     @Column()
     type: ClientType;
 
-    @ManyToMany(() => CompanyEntity, (company) => company.clients)
-    @JoinTable()
-    companies: CompanyEntity[];
-
     constructor(data?: Partial<ClientEntity>) {
         this.id = data?.id ?? '';
         this.email = data?.email;
@@ -39,7 +28,6 @@ export class ClientEntity {
         this.phone = data?.phone;
         this.address = data?.address;
         this.type = data?.type;
-        this.companies = data?.companies;
     }
 }
 

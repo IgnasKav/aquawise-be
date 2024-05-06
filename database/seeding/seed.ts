@@ -8,6 +8,7 @@ import { DataSource } from 'typeorm';
 import { ClientEntity } from 'src/clients/entities/client.entity';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
+import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
 
 const dataSource = new DataSource(createDataSourceOptions());
 
@@ -58,17 +59,18 @@ const createUsers = async () => {
 };
 
 const createClients = async () => {
-    const clientRepository =
-        dataSource.getRepository<ClientEntity>('ClientEntity');
-
-    const companyRepository =
+    const clientRepo = dataSource.getRepository<ClientEntity>('ClientEntity');
+    const companyRepo =
         dataSource.getRepository<CompanyEntity>('CompanyEntity');
+    const relationRepo = dataSource.getRepository<CompanyClientRelationEntity>(
+        'CompanyClientRelationEntity',
+    );
 
-    const savedClients = await clientRepository.find({ take: 2 });
+    const existingClients = await clientRepo.find({ take: 2 });
 
-    if (savedClients.length > 0) return;
+    if (existingClients.length > 0) return;
 
-    const savedCompanies = await companyRepository.find({ take: 2 });
+    const savedCompanies = await companyRepo.find({ take: 2 });
 
     if (savedCompanies.length === 0) return;
 
@@ -77,13 +79,14 @@ const createClients = async () => {
     for (let i = 0; i < 20; i++) {
         const isCompany = i % 3 === 0;
 
+        const id = uuid();
+
         const client = new ClientEntity({
-            id: uuid(),
+            id: id,
             email: faker.internet.email(),
             phone: faker.phone.number(),
             address: faker.location.streetAddress(),
             type: isCompany ? 'company' : 'person',
-            companies: savedCompanies,
         });
 
         client.name = isCompany
@@ -93,7 +96,21 @@ const createClients = async () => {
         clientsToSave.push(client);
     }
 
-    clientRepository.save(clientsToSave);
+    const savedClients = await clientRepo.save(clientsToSave);
+
+    const relationsToSave: CompanyClientRelationEntity[] = [];
+
+    for (const client of savedClients) {
+        const relation = new CompanyClientRelationEntity({
+            id: uuid(),
+            clientId: client.id,
+            companyId: savedCompanies[0].id,
+        });
+
+        relationsToSave.push(relation);
+    }
+
+    await relationRepo.save(relationsToSave);
 };
 
 main();
