@@ -1,5 +1,5 @@
 import { IsOptional, IsString, ValidateIf } from 'class-validator';
-export class CompanyCreateDto {
+export class CompanyCreateRequest {
     @IsString()
     name: string;
 

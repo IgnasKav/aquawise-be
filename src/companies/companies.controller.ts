@@ -9,9 +9,10 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/decorators/jwt.decorator';
 import { CompaniesService } from './companies.service';
-import { CompanyCreateDto } from './dto/companyCreate.dto';
+import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorators/role.decorator';
+import { GetCompanyClientsRequest } from './models/GetCompanyClientsRequest';
 
 @Controller('')
 export class CompaniesController {
@@ -19,12 +20,16 @@ export class CompaniesController {
 
     // everyone
     @Post('application')
-    applyForCompanyAccount(@Body() request: CompanyCreateDto) {
+    applyForCompanyAccount(@Body() request: CompanyCreateRequest) {
         return this.companiesService.applyForCompanyAccount(request);
     }
 
-    // support
+    @Post('clients')
+    getCompanyClients(@Body() request: GetCompanyClientsRequest) {
+        return this.companiesService.getCompanyClients(request);
+    }
 
+    // support
     @Get()
     @Role('support')
     @UseGuards(JwtAuthGuard, RoleGuard)

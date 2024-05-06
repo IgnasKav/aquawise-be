@@ -7,11 +7,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
-import { CompanyCreateDto } from './dto/companyCreate.dto';
+import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
 import transactionRunner from 'src/common/db-transaction-runner';
+import { GetCompanyClientsRequest } from './models/GetCompanyClientsRequest';
+import { ClientEntity } from 'src/clients/entities/client.entity';
 
 @Injectable()
 export class CompaniesService {
@@ -25,7 +27,7 @@ export class CompaniesService {
         private dataSource: DataSource,
     ) {}
 
-    async applyForCompanyAccount(request: CompanyCreateDto) {
+    async applyForCompanyAccount(request: CompanyCreateRequest) {
         const userWithSameEmail = await this.userRepository.findOne({
             where: { email: request.email },
         });
@@ -72,6 +74,21 @@ export class CompaniesService {
 
         await this.companyRepository.save(company);
         return company;
+    }
+
+    async getCompanyClients({
+        companyId,
+    }: GetCompanyClientsRequest): Promise<ClientEntity[]> {
+        const company = await this.companyRepository.findOne({
+            where: {
+                id: companyId,
+            },
+            relations: {
+                clients: true,
+            },
+        });
+
+        return company.clients;
     }
 
     // support

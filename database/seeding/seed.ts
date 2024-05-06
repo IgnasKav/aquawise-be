@@ -72,8 +72,6 @@ const createClients = async () => {
 
     if (savedCompanies.length === 0) return;
 
-    console.log('savedCompanies', JSON.stringify(savedCompanies));
-
     const clientsToSave: ClientEntity[] = [];
 
     for (let i = 0; i < 20; i++) {
@@ -95,7 +93,7 @@ const createClients = async () => {
         clientsToSave.push(client);
     }
 
-    clientRepository.save(clientsToSave, {});
+    clientRepository.save(clientsToSave);
 };
 
 main();
