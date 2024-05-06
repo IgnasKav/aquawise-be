@@ -12,7 +12,10 @@ import { v4 as uuid } from 'uuid';
 import { IMailService } from 'src/mail/models/IMailService';
 import { UserEntity } from 'src/user/entities/user.entity';
 import transactionRunner from 'src/common/db-transaction-runner';
-import { GetCompanyClientsRequest } from './models/GetCompanyClientsRequest';
+import {
+    GetCompanyClientsRequest,
+    GetCompanyClientsResponse,
+} from './models/GetCompanyClientsRequest';
 import { CompanyClientRelationEntity } from './entities/company-client-relation.entity';
 import { ClientEntity } from 'src/clients/entities/client.entity';
 
@@ -82,14 +85,14 @@ export class CompaniesService {
     async getCompanyClients({
         companyId,
         page,
-        size,
-    }: GetCompanyClientsRequest) {
+        pageSize,
+    }: GetCompanyClientsRequest): Promise<GetCompanyClientsResponse> {
         const [relations, total] = await this.dataSource
             .getRepository(CompanyClientRelationEntity)
             .createQueryBuilder('relation')
             .where('relation.companyId = :companyId', { companyId })
-            .skip((page - 1) * size)
-            .take(size)
+            .skip((page - 1) * pageSize)
+            .take(pageSize)
             .getManyAndCount();
 
         const clientIds = relations.map((r) => r.clientId);
@@ -98,7 +101,12 @@ export class CompaniesService {
             id: In(clientIds),
         });
 
-        return clients;
+        return {
+            total,
+            page,
+            pageSize,
+            data: clients,
+        };
     }
 
     // support

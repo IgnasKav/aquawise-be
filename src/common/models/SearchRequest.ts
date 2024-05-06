@@ -8,5 +8,11 @@ export class SearchRequest {
     @IsNumber()
     @Min(0)
     @Max(100)
-    size: number;
+    pageSize: number;
 }
+
+export type SearchResponse = {
+    total: number;
+    page: number;
+    pageSize: number;
+};
