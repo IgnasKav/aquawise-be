@@ -21,7 +21,10 @@ export class AuthService {
 
     async login(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
         const { email, password } = loginRequest;
-        const user = await this.userRepository.findOne({ where: { email } });
+        const user = await this.userRepository.findOne({
+            where: { email },
+            relations: { company: true },
+        });
 
         if (!user) {
             throw new NotFoundException('email or password is incorrect');

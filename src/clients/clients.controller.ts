@@ -7,7 +7,7 @@ export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 
     @Post()
-    getCompanyClients(@Body() request: SearchClientsByCompanyRequest) {
+    searchClientsByCompany(@Body() request: SearchClientsByCompanyRequest) {
         return this.clientsService.searchClientsByCompany(request);
     }
 }
