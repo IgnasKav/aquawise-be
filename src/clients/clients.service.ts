@@ -20,6 +20,7 @@ export class ClientsService {
         companyId,
         page,
         pageSize,
+        filters,
     }: SearchClientsByCompanyRequest): Promise<SearchClientsByCompanyResponse> {
         const [relations, total] = await this.dataSource
             .getRepository(CompanyClientRelationEntity)

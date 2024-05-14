@@ -31,4 +31,4 @@ export class ClientEntity {
     }
 }
 
-type ClientType = 'person' | 'company';
+export type ClientType = 'person' | 'company';

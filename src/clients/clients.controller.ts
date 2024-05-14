@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    NotFoundException,
+    Param,
+    Post,
+} from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { SearchClientsByCompanyRequest } from './models/GetCompanyClientsRequest';
 
