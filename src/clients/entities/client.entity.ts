@@ -21,6 +21,12 @@ export class ClientEntity {
     @Column()
     type: ClientType;
 
+    @OneToMany(
+        () => CompanyClientRelationEntity,
+        (relation) => relation.company,
+    )
+    clientToCompanies?: CompanyClientRelationEntity[];
+
     constructor(data?: Partial<ClientEntity>) {
         this.id = data?.id ?? '';
         this.email = data?.email;

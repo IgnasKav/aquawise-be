@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ClientEntity } from './entities/client.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
 import {
@@ -10,11 +8,7 @@ import {
 
 @Injectable()
 export class ClientsService {
-    constructor(
-        @InjectRepository(ClientEntity)
-        private readonly clientRepo: Repository<ClientEntity>,
-        private dataSource: DataSource,
-    ) {}
+    constructor(private dataSource: DataSource) {}
 
     async searchClientsByCompany({
         companyId,
@@ -22,19 +16,34 @@ export class ClientsService {
         pageSize,
         filters,
     }: SearchClientsByCompanyRequest): Promise<SearchClientsByCompanyResponse> {
-        const [relations, total] = await this.dataSource
-            .getRepository(CompanyClientRelationEntity)
-            .createQueryBuilder('relation')
-            .where('relation.companyId = :companyId', { companyId })
-            .skip((page - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
+        const clientCompanyRelationRepo = this.dataSource.getRepository(
+            CompanyClientRelationEntity,
+        );
 
-        const clientIds = relations.map((r) => r.clientId);
+        const clientTypeFilter =
+            filters.statuses.length > 0
+                ? {
+                      client: {
+                          type: In(filters.statuses),
+                      },
+                  }
+                : {};
 
-        const clients = await this.clientRepo.findBy({
-            id: In(clientIds),
-        });
+        const [relations, total] = await clientCompanyRelationRepo.findAndCount(
+            {
+                where: {
+                    companyId,
+                    ...clientTypeFilter,
+                },
+                relations: {
+                    client: true,
+                },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+            },
+        );
+
+        const clients = relations.map((r) => r.client);
 
         return {
             total,

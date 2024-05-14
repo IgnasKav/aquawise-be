@@ -41,6 +41,12 @@ export class CompanyEntity {
 
     @OneToMany(() => ProductEntity, (product) => product.company)
     products?: ProductEntity[];
+
+    @OneToMany(
+        () => CompanyClientRelationEntity,
+        (relation) => relation.company,
+    )
+    companyToClients?: CompanyClientRelationEntity[];
 }
 
 export enum CompanyStatus {
