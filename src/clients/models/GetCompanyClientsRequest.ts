@@ -2,7 +2,10 @@ import { IsObject, IsUUID } from 'class-validator';
 import { ClientEntity, ClientType } from 'src/clients/entities/client.entity';
 import { SearchRequest, SearchResponse } from 'src/common/models/SearchRequest';
 
+type ClientSearchField = 'email' | 'name' | 'phone' | 'address';
+
 class ClientSearchFilters {
+    searchFields?: ClientSearchField[];
     types: ClientType[];
 }
 

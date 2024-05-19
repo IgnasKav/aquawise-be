@@ -35,12 +35,24 @@ export class ClientsService {
         }
 
         if (searchText.trim() !== '') {
-            queryBuilder.andWhere(
-                'LOWER(client.name) LIKE LOWER(:searchText)',
-                {
+            if (filters.searchFields?.length > 0) {
+                const searchConditions = filters.searchFields
+                    .map((field) => {
+                        return `LOWER(client.${field}) LIKE LOWER(:searchText)`;
+                    })
+                    .join(' OR ');
+
+                queryBuilder.andWhere(`(${searchConditions})`, {
                     searchText: `%${searchText}%`,
-                },
-            );
+                });
+            } else {
+                queryBuilder.andWhere(
+                    'LOWER(client.name) LIKE LOWER(:searchText)',
+                    {
+                        searchText: `%${searchText}%`,
+                    },
+                );
+            }
         }
 
         queryBuilder.skip((page - 1) * pageSize).take(pageSize);
