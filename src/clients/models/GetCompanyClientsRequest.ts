@@ -3,7 +3,7 @@ import { ClientEntity, ClientType } from 'src/clients/entities/client.entity';
 import { SearchRequest, SearchResponse } from 'src/common/models/SearchRequest';
 
 class ClientSearchFilters {
-    statuses: ClientType[];
+    types: ClientType[];
 }
 
 export class SearchClientsByCompanyRequest extends SearchRequest {
