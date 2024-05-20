@@ -1,12 +1,15 @@
 import {
     Column,
     Entity,
+    JoinColumn,
     ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
     Unique,
 } from 'typeorm';
 import { UserDto } from '../dto/user.dto';
 import { CompanyEntity } from '../../companies/entities/company.entity';
+import { UserFiltersEntity } from './user-filter.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -26,13 +29,13 @@ export class UserEntity {
     phone: string;
 
     @Column({ nullable: true })
-    password: string;
+    password?: string;
 
     @Column({
         unique: true,
         nullable: true,
     })
-    userRegistrationId: string;
+    userRegistrationId?: string;
 
     @Column()
     role: UserRole;
@@ -42,6 +45,12 @@ export class UserEntity {
 
     @ManyToOne(() => CompanyEntity, (company) => company.users)
     company: CompanyEntity;
+
+    @OneToOne(() => UserFiltersEntity, (filters) => filters.user, {
+        nullable: true,
+    })
+    @JoinColumn()
+    filters: UserFiltersEntity;
 
     constructor(data?: Partial<UserEntity>) {
         this.id = data?.id ?? '';

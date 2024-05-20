@@ -1,24 +1,17 @@
-import {
-    ConflictException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, UserRole } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { hash } from 'bcryptjs';
+import { UserEntity } from './entities/user.entity';
+import { DataSource, Repository } from 'typeorm';
+import { UserFiltersEntity } from './entities/user-filter.entity';
+import { UserFilterSaveRequest } from './dto/user-filter-save-request';
 import { v4 as uuid } from 'uuid';
-import { InvitationRequestDto } from '../auth/dto/InvitationRequest.dto';
-import { UserRegistrationRequestDto } from '../auth/dto/RegistrationRequest.dto';
-import { CompanyEntity } from '../companies/entities/company.entity';
-import { CompaniesService } from '../companies/companies.service';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        private readonly companiesService: CompaniesService,
+        private dataSource: DataSource,
     ) {}
 
     async saveUser(user: UserEntity): Promise<UserEntity> {
@@ -37,5 +30,48 @@ export class UsersService {
             where: { email: email },
             relations: { company: true },
         });
+    }
+
+    async getUserFilters(userId: string): Promise<object> {
+        const userFiltersRepo =
+            this.dataSource.getRepository(UserFiltersEntity);
+
+        const resp = await userFiltersRepo.findOne({
+            where: {
+                userId,
+            },
+        });
+
+        const filters = JSON.parse(resp.filterJSON);
+
+        return filters;
+    }
+
+    async saveUserFilters(userId: string, req: UserFilterSaveRequest) {
+        const userFiltersRepo =
+            this.dataSource.getRepository(UserFiltersEntity);
+
+        const existingFilter = await userFiltersRepo.findOne({
+            where: {
+                userId,
+                scope: req.scope,
+            },
+        });
+
+        if (existingFilter === null) {
+            await userFiltersRepo.save({
+                id: uuid(),
+                scope: req.scope,
+                filterJSON: JSON.stringify(req.filter),
+                userId,
+            });
+
+            return;
+        }
+
+        existingFilter.scope = req.scope;
+        existingFilter.filterJSON = JSON.stringify(req.filter);
+
+        await userFiltersRepo.save(existingFilter);
     }
 }

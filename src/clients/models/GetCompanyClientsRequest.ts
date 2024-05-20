@@ -2,18 +2,18 @@ import { IsObject, IsUUID } from 'class-validator';
 import { ClientEntity, ClientType } from 'src/clients/entities/client.entity';
 import { SearchRequest, SearchResponse } from 'src/common/models/SearchRequest';
 
-type ClientSearchField = 'email' | 'name' | 'phone' | 'address';
+export type ClientSearchField = 'email' | 'name' | 'phone' | 'address';
 
-class ClientSearchFilters {
+export type ClientsSearchFilter = {
     searchFields?: ClientSearchField[];
     types: ClientType[];
-}
+};
 
 export class SearchClientsByCompanyRequest extends SearchRequest {
     @IsUUID()
     companyId: string;
     @IsObject()
-    filters: ClientSearchFilters;
+    filter: ClientsSearchFilter;
 }
 
 export type SearchClientsByCompanyResponse = {
