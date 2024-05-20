@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
-import { UserFiltersEntity } from './entities/user-filter.entity';
+import {
+    UserFilterScope,
+    UserFiltersEntity,
+} from './entities/user-filter.entity';
 import { UserFilterSaveRequest } from './dto/user-filter-save-request';
 import { v4 as uuid } from 'uuid';
 
@@ -32,13 +35,17 @@ export class UsersService {
         });
     }
 
-    async getUserFilters(userId: string): Promise<object> {
+    async getUserFilters(
+        userId: string,
+        scope: UserFilterScope,
+    ): Promise<object> {
         const userFiltersRepo =
             this.dataSource.getRepository(UserFiltersEntity);
 
         const resp = await userFiltersRepo.findOne({
             where: {
                 userId,
+                scope,
             },
         });
 

@@ -12,7 +12,7 @@ export class UsersController {
         @Param('userId') userId: string,
         @Param('scope') scope: UserFilterScope,
     ) {
-        return await this.usersService.getUserFilters(userId);
+        return await this.usersService.getUserFilters(userId, scope);
     }
 
     @Post(':userId/filters')
