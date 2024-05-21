@@ -4,13 +4,17 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { EditProductForm } from './dto/EditProductRequest';
+import { EditProductForm } from './models/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
 import checkPermission from 'src/common/permission-check';
-import { CreateProductForm } from './dto/CreateProductRequest';
+import { CreateProductForm } from './models/CreateProductRequest';
 import { ProductUpdateService } from './crud/product-update.service';
+import {
+    ProductsSearchRequest,
+    ProductsSearchResponse,
+} from './models/products-search-request';
 
 @Injectable()
 export class ProductsService {
@@ -19,6 +23,27 @@ export class ProductsService {
         private productRepository: Repository<ProductEntity>,
         private productUpdateService: ProductUpdateService,
     ) {}
+
+    async search({
+        page,
+        pageSize,
+    }: ProductsSearchRequest): Promise<ProductsSearchResponse> {
+        const queryBuilder = this.productRepository
+            .createQueryBuilder('product')
+            .leftJoinAndSelect('product.images', 'images')
+            .leftJoinAndSelect('product.company', 'company');
+
+        queryBuilder.skip((page - 1) * pageSize).take(pageSize);
+
+        const [products, total] = await queryBuilder.getManyAndCount();
+
+        return {
+            total,
+            page,
+            pageSize,
+            data: products,
+        };
+    }
 
     async getProductById(id: string) {
         const product = await this.productRepository.findOne({
@@ -67,13 +92,5 @@ export class ProductsService {
         checkPermission(product, user);
 
         return this.productRepository.delete(id);
-    }
-
-    async getAllProducts() {
-        const products = await this.productRepository.find({
-            relations: { images: true, company: true },
-        });
-
-        return products;
     }
 }

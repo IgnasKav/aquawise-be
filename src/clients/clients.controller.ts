@@ -1,13 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { SearchClientsByCompanyRequest } from './models/GetCompanyClientsRequest';
+import { ClientsSearchRequest } from './models/company-clients-search-request';
 
 @Controller('clients')
 export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 
     @Post()
-    searchClientsByCompany(@Body() request: SearchClientsByCompanyRequest) {
+    searchClientsByCompany(@Body() request: ClientsSearchRequest) {
         return this.clientsService.searchClientsByCompany(request);
     }
 }

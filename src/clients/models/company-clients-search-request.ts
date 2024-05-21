@@ -9,13 +9,11 @@ export type ClientsSearchFilter = {
     types: ClientType[];
 };
 
-export class SearchClientsByCompanyRequest extends SearchRequest {
+export class ClientsSearchRequest extends SearchRequest {
     @IsUUID()
     companyId: string;
     @IsObject()
     filter: ClientsSearchFilter;
 }
 
-export type SearchClientsByCompanyResponse = {
-    data: ClientEntity[];
-} & SearchResponse;
+export type ClientsSearchResponse = SearchResponse<ClientEntity>;

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, In, Like, Repository } from 'typeorm';
 import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
 import {
-    SearchClientsByCompanyRequest,
-    SearchClientsByCompanyResponse,
-} from 'src/clients/models/GetCompanyClientsRequest';
+    ClientsSearchRequest,
+    ClientsSearchResponse,
+} from './models/company-clients-search-request';
 
 @Injectable()
 export class ClientsService {
@@ -16,7 +16,7 @@ export class ClientsService {
         pageSize,
         searchText,
         filter: filters,
-    }: SearchClientsByCompanyRequest): Promise<SearchClientsByCompanyResponse> {
+    }: ClientsSearchRequest): Promise<ClientsSearchResponse> {
         const clientCompanyRelationRepo = this.dataSource.getRepository(
             CompanyClientRelationEntity,
         );

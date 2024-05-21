@@ -12,10 +12,11 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/decorators/jwt.decorator';
 import { ProductsService } from './products.service';
-import { CreateProductForm } from './dto/CreateProductRequest';
-import { EditProductForm } from './dto/EditProductRequest';
+import { CreateProductForm } from './models/CreateProductRequest';
+import { EditProductForm } from './models/EditProductRequest';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorators/role.decorator';
+import { ProductsSearchRequest } from './models/products-search-request';
 
 @Controller('products')
 export class ProductsController {
@@ -23,14 +24,14 @@ export class ProductsController {
 
     // everyone
 
-    @Get()
-    getAll() {
-        return this.productsService.getAllProducts();
-    }
-
     @Get(':id')
     getById(@Param('id', ParseUUIDPipe) id: string) {
         return this.productsService.getProductById(id);
+    }
+
+    @Post('search')
+    searchProducts(@Body() request: ProductsSearchRequest) {
+        return this.productsService.search(request);
     }
 
     // company admin and support

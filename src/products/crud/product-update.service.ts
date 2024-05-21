@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from '../entities/product.entity';
 import { Repository } from 'typeorm';
 import { ImageEntity } from 'src/images/entities/image.entity';
-import { EditProductForm } from '../dto/EditProductRequest';
+import { EditProductForm } from '../models/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
 import checkPermission from 'src/common/permission-check';
 
