@@ -4,11 +4,11 @@ import { Repository } from 'typeorm';
 import { ImageEntity } from './entities/image.entity';
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
-import { ImagesDeleteRequest } from './dto/ImageDeleteRequest';
+import { ImagesDeleteRequest } from './models/ImageDeleteRequest';
 import { promisify } from 'util';
 import checkPermission from 'src/common/permission-check';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { ImageDto } from './dto/Image.dto';
+import { ImageDto } from './models/Image.dto';
 
 @Injectable()
 export class ImagesService {
@@ -18,10 +18,7 @@ export class ImagesService {
     ) {}
 
     // find users company, if user has no company dont save
-    async saveImages(
-        images: Express.Multer.File[],
-        user: UserEntity,
-    ): Promise<ImageEntity[]> {
+    async saveImages(images: Express.Multer.File[], user: UserEntity) {
         const imageEntities: ImageEntity[] = [];
 
         for (const image of images) {
@@ -40,7 +37,10 @@ export class ImagesService {
         }
 
         const res = await this.imageRepo.save(imageEntities);
-        return res;
+
+        return {
+            images: res,
+        };
     }
 
     async deleteImages(req: ImagesDeleteRequest, user: UserEntity) {

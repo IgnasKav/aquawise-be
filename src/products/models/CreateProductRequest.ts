@@ -1,5 +1,5 @@
 import { IsNumber, IsString, ValidateNested } from 'class-validator';
-import { ImageDto } from 'src/images/dto/Image.dto';
+import { ImageDto } from 'src/images/models/Image.dto';
 
 export class CreateProductForm {
     @IsString()

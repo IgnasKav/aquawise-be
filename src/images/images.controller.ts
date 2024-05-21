@@ -10,10 +10,11 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
 import { ImageEntity } from './entities/image.entity';
-import { ImagesDeleteRequest } from './dto/ImageDeleteRequest';
+import { ImagesDeleteRequest } from './models/ImageDeleteRequest';
 import { JwtAuthGuard } from 'src/auth/decorators/jwt.decorator';
 import { Role } from 'src/auth/decorators/role.decorator';
 import { RoleGuard } from 'src/auth/guards/role.guard';
+import { ImageSaveResponse } from './models/image-save-response';
 
 @Controller('images')
 @Role('admin')
@@ -26,7 +27,7 @@ export class ImagesController {
     createProduct(
         @UploadedFiles() images: Express.Multer.File[],
         @Request() req,
-    ): Promise<ImageEntity[]> {
+    ): Promise<ImageSaveResponse> {
         return this.imagesService.saveImages(images, req.user);
     }
 
