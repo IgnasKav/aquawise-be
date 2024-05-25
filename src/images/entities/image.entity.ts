@@ -11,11 +11,12 @@ export class ImageEntity {
     @Column()
     imageUrl: string;
 
+    // relations
     @Column({ nullable: true })
     productId?: string;
 
     @ManyToOne(() => ProductEntity, (product) => product.images, {
-        nullable: true, // This makes the relation optional
+        nullable: true,
     })
     product?: ProductEntity;
 
@@ -23,5 +24,5 @@ export class ImageEntity {
     companyId: string;
 
     @ManyToOne(() => CompanyEntity, (company) => company.images)
-    company: CompanyEntity;
+    company?: CompanyEntity;
 }

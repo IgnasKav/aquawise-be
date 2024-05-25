@@ -9,6 +9,8 @@ import { ClientEntity } from 'src/clients/entities/client.entity';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
 import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
+import { ProductEntity } from 'src/products/entities/product.entity';
+import { ImageEntity } from 'src/images/entities/image.entity';
 
 const dataSource = new DataSource(createDataSourceOptions());
 
@@ -17,6 +19,7 @@ async function main() {
     await createCompanies();
     await createUsers();
     await createClients();
+    await createProducts();
 }
 
 const createCompanies = async () => {
@@ -79,10 +82,8 @@ const createClients = async () => {
     for (let i = 0; i < 20; i++) {
         const isCompany = i % 3 === 0;
 
-        const id = uuid();
-
         const client = new ClientEntity({
-            id: id,
+            id: uuid(),
             email: faker.internet.email(),
             phone: faker.phone.number(),
             address: faker.location.streetAddress(),
@@ -111,6 +112,45 @@ const createClients = async () => {
     }
 
     await relationRepo.save(relationsToSave);
+};
+
+const createProducts = async () => {
+    const productRepo =
+        dataSource.getRepository<ProductEntity>('ProductEntity');
+    const imageRepo = dataSource.getRepository<ImageEntity>('ImageEntity');
+    const companyRepo =
+        dataSource.getRepository<CompanyEntity>('CompanyEntity');
+
+    const existingProducts = await productRepo.find({ take: 1 });
+    const existingImages = await imageRepo.find({ take: 1 });
+
+    if (existingImages.length > 0 || existingProducts.length > 0) return;
+
+    const defaultCompany = (await companyRepo.find({ take: 1 }))[0];
+
+    // 96 because 96 seed images
+    for (let i = 1; i <= 96; i++) {
+        const product: ProductEntity = {
+            id: uuid(),
+            name: faker.commerce.product(),
+            quantity: faker.number.int(500),
+            price: faker.number.float({ max: 5000, fractionDigits: 2 }),
+            createDate: faker.date.past(),
+            changeDate: faker.date.recent(),
+            companyId: defaultCompany.id,
+        };
+
+        await productRepo.save(product);
+
+        const productImage: ImageEntity = {
+            id: uuid(),
+            imageUrl: `seed/${i}.jpg`,
+            productId: product.id,
+            companyId: defaultCompany.id,
+        };
+
+        await imageRepo.save(productImage);
+    }
 };
 
 main();

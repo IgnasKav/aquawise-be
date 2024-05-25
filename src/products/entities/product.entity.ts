@@ -19,17 +19,25 @@ export class ProductEntity {
     @Column()
     quantity: number;
 
-    @Column()
+    @Column('decimal')
     price: number;
+
+    @Column()
+    createDate: Date;
+
+    @Column()
+    changeDate: Date;
+
+    //relations
 
     @OneToMany(() => ImageEntity, (image) => image.product, {
         cascade: true,
     })
-    images: ImageEntity[];
+    images?: ImageEntity[];
 
     @Column()
     companyId: string;
 
     @ManyToOne(() => CompanyEntity, (company) => company.products)
-    company: CompanyEntity;
+    company?: CompanyEntity;
 }

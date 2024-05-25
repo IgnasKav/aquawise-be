@@ -3,7 +3,7 @@ import { UserDto } from 'src/user/dto/user.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 
 type EntityWithCompany = {
-    company: { id: string };
+    companyId: string;
 };
 
 const checkPermission = (
@@ -14,7 +14,7 @@ const checkPermission = (
         return;
     }
 
-    if (entity.company.id !== user.company.id) {
+    if (entity.companyId !== user.company.id) {
         throw new ForbiddenException(
             'You do not have permission to access this resource',
         );

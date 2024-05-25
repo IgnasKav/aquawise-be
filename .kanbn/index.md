@@ -12,6 +12,7 @@ completedColumns:
 ## Todo
 
 - [testing](tasks/testing.md)
+- [update-products-seed](tasks/update-products-seed.md)
 
 ## In Progress
 
