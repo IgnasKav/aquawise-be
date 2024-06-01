@@ -61,6 +61,8 @@ export class ProductsService {
     async createProduct(productForm: CreateProductForm, user: UserEntity) {
         const product = this.productRepository.create({
             ...productForm,
+            createDate: new Date(),
+            changeDate: new Date(),
             company: user.company,
         });
 

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from '../entities/product.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ImageEntity } from 'src/images/entities/image.entity';
 import { EditProductForm } from '../models/EditProductRequest';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -32,7 +32,12 @@ export class ProductUpdateService {
 
         checkPermission(product, user);
 
-        const images = await this.imageRepository.findBy(productForm.images);
+        const imageIds = productForm.images.map((img) => img.id);
+        const images = await this.imageRepository.find({
+            where: {
+                id: In(imageIds),
+            },
+        });
 
         images.forEach((image) => {
             checkPermission(image, user);
