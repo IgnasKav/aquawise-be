@@ -19,5 +19,5 @@ export class UserFilterSaveRequest {
     scope: UserFilterScope;
 
     @IsObject()
-    filter: ClientsSearchFilter;
+    filter: object;
 }
