@@ -1,8 +1,8 @@
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: `.env` });
 
-export const createDataSourceOptions = (): DataSourceOptions => {
+const createDataSourceOptions = (): DataSourceOptions => {
     const isProd = process.env.NODE_ENV === 'prod';
 
     const dataSourceOptions: DataSourceOptions = {
@@ -24,3 +24,7 @@ export const createDataSourceOptions = (): DataSourceOptions => {
 
     return dataSourceOptions;
 };
+
+const dataSource = new DataSource(createDataSourceOptions());
+
+export { dataSource, createDataSourceOptions };

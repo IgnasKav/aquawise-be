@@ -8,94 +8,56 @@ import {
     Post,
     Put,
     Request,
-    UploadedFile,
     UseGuards,
-    UseInterceptors,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/decorators/jwt.decorator';
 import { ProductsService } from './products.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import {
-    CreateProductForm,
-    CreateProductRequestDto,
-} from './dto/CreateProductRequest.dto';
-import { diskStorage } from 'multer';
-import { v4 as uuid } from 'uuid';
-import {
-    EditProductForm,
-    EditProductRequestDto,
-} from './dto/EditProductRequest.dto';
+import { CreateProductForm } from './models/CreateProductRequest';
+import { EditProductForm } from './models/EditProductRequest';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Role } from 'src/auth/decorators/role.decorator';
+import { ProductsSearchRequest } from './models/products-search-request';
 
 @Controller('products')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
-    @Get()
-    getAll() {
-        return this.productsService.getAllProducts();
-    }
+    // everyone
 
     @Get(':id')
     getById(@Param('id', ParseUUIDPipe) id: string) {
         return this.productsService.getProductById(id);
     }
 
-    @Post()
-    @UseInterceptors(
-        FileInterceptor('image', {
-            storage: diskStorage({
-                destination: './images',
-                filename: (req, file, cb) => {
-                    const fileExtension = file.originalname.split('.')[1];
-                    const fileName = `${uuid()}.${fileExtension}`;
-                    cb(null, fileName);
-                },
-            }),
-        }),
-    )
-    createProduct(
-        @UploadedFile() image: Express.Multer.File,
-        @Body() body: { product: string },
-        @Request() req,
-    ) {
-        const userId = req.userId;
-        const request: CreateProductRequestDto = {
-            userId: userId,
-            image: image,
-            product: JSON.parse(body.product) as CreateProductForm,
-        };
+    @Post('search')
+    searchProducts(@Body() request: ProductsSearchRequest) {
+        return this.productsService.search(request);
+    }
 
-        return this.productsService.createProduct(request);
+    // company admin and support
+
+    @Post()
+    @Role(['admin', 'support'])
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    createProduct(@Body() body: CreateProductForm, @Request() req) {
+        return this.productsService.createProduct(body, req.user);
     }
 
     @Put(':id')
-    @UseInterceptors(
-        FileInterceptor('image', {
-            storage: diskStorage({
-                destination: './dist/images',
-                filename: (req, file, cb) => {
-                    const fileExtension = file.originalname.split('.')[1];
-                    const fileName = `${uuid()}.${fileExtension}`;
-                    cb(null, fileName);
-                },
-            }),
-        }),
-    )
+    @Role(['admin', 'support'])
+    @UseGuards(JwtAuthGuard, RoleGuard)
     updateProduct(
         @Param('id', ParseUUIDPipe) id: string,
-        @UploadedFile() image: Express.Multer.File | undefined,
-        @Body() body: { product: string },
+        @Body() body: EditProductForm,
+        @Request() req,
     ) {
-        const request: EditProductRequestDto = {
-            image: image,
-            product: JSON.parse(body.product) as EditProductForm,
-        };
-
-        return this.productsService.updateProduct(id, request);
+        return this.productsService.updateProduct(id, body, req.user);
     }
 
     @Delete(':id')
-    deleteProduct(@Param('id', ParseUUIDPipe) id: string) {
-        return this.productsService.deleteProduct(id);
+    @Role(['admin', 'support'])
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    deleteProduct(@Param('id', ParseUUIDPipe) id: string, @Request() req) {
+        return this.productsService.deleteProduct(id, req.user);
     }
 }

@@ -1,11 +1,12 @@
 import {
     Column,
     Entity,
-    JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CompanyEntity } from '../../companies/entities/company.entity';
+import { ImageEntity } from '../../images/entities/image.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -18,13 +19,25 @@ export class ProductEntity {
     @Column()
     quantity: number;
 
-    @Column()
+    @Column('decimal')
     price: number;
 
     @Column()
-    imageUrl: string;
+    createDate: Date;
 
-    @ManyToOne(() => CompanyEntity, { nullable: false })
-    @JoinColumn({ name: 'companyId' })
-    company: CompanyEntity;
+    @Column()
+    changeDate: Date;
+
+    //relations
+
+    @OneToMany(() => ImageEntity, (image) => image.product, {
+        cascade: true,
+    })
+    images?: ImageEntity[];
+
+    @Column()
+    companyId: string;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.products)
+    company?: CompanyEntity;
 }

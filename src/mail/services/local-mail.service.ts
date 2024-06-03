@@ -8,8 +8,7 @@ import { IMailService } from '../models/IMailService';
 export class LocalMailService implements IMailService {
     constructor(private mailerService: MailerService) {}
     async senUserInvitation(user: UserEntity) {
-        console.log('Sending email to: ', user.email);
-        const url = `${process.env.FE_URL}/auth/register/?userRegistrationId=${user.userRegistrationId}`;
+        const invitationLink = `${process.env.FE_URL}/auth/register?registrationId=${user.userRegistrationId}`;
 
         await this.mailerService.sendMail({
             to: user.email,
@@ -17,21 +16,25 @@ export class LocalMailService implements IMailService {
             template: 'userInvitation',
             context: {
                 companyName: user.company.name,
-                url,
+                invitationLink,
             },
         });
     }
 
-    async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
+    async sendApplicationConfirmation(
+        company: CompanyEntity,
+        user: UserEntity,
+    ) {
+        const invitationLink = `${process.env.FE_URL}/auth/register?registrationId=${user.userRegistrationId}`;
 
         await this.mailerService.sendMail({
-            to: company.email,
+            to: user.email,
             subject: 'Your application has been approved!',
             template: 'applicationConfirmation',
             context: {
+                appName: 'Aquawise',
                 companyName: company.name,
-                url,
+                invitationLink,
             },
         });
     }

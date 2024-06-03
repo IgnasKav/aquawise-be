@@ -1,73 +1,71 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import * as admin from 'firebase-admin';
-import { CompanyClient, Device } from './dto/Client';
-import { CompanyEntity } from '../companies/entities/company.entity';
-import { ClientCreateDto } from './dto/clientCreate.dto';
-import { ClientEntity } from './entities/client.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { OrderEntity } from '../orders/entities/order.entity';
+import { Injectable } from '@nestjs/common';
+import { DataSource, In, Like, Repository } from 'typeorm';
+import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
+import {
+    ClientsSearchRequest,
+    ClientsSearchResponse,
+} from './models/company-clients-search-request';
 
 @Injectable()
 export class ClientsService {
-    constructor(
-        @InjectRepository(ClientEntity)
-        private readonly clientRepository: Repository<ClientEntity>,
-    ) {}
+    constructor(private dataSource: DataSource) {}
 
-    async getClientsNew(companyId: string) {
-        return await this.clientRepository.find({
-            where: { company: { id: companyId } },
-        });
-    }
+    async searchClientsByCompany({
+        companyId,
+        page,
+        pageSize,
+        searchText,
+        filter: filters,
+    }: ClientsSearchRequest): Promise<ClientsSearchResponse> {
+        const clientCompanyRelationRepo = this.dataSource.getRepository(
+            CompanyClientRelationEntity,
+        );
 
-    async getClients(companyId: string) {
-        const clients: CompanyClient[] = [];
-        const companyUsersRes = await admin
-            .database()
-            .ref(`CompanyUsers/${companyId}`)
-            .get();
+        const queryBuilder = clientCompanyRelationRepo
+            .createQueryBuilder('clientCompanyRelation')
+            .innerJoinAndSelect('clientCompanyRelation.client', 'client')
+            .where('clientCompanyRelation.companyId = :companyId', {
+                companyId,
+            });
 
-        if (!companyUsersRes.val()) {
-            return [];
+        if (filters.types.length > 0) {
+            queryBuilder.andWhere('client.type IN (:...types)', {
+                types: filters.types,
+            });
         }
 
-        const companyUserIds = Object.keys(companyUsersRes.val());
-        await Promise.all(
-            companyUserIds.map(async (userId: string) => {
-                const userAuthDataResp = await admin.auth().getUser(userId);
-                const userDataResp = await admin
-                    .database()
-                    .ref(`UsersData/${userId}`)
-                    .get();
-                const client = new CompanyClient({
-                    email: userAuthDataResp.email,
-                    ...userDataResp.val(),
-                });
-                client.devices = await Promise.all(
-                    client.devices.map(async (device) => {
-                        const fetchedDevice = await admin
-                            .database()
-                            .ref(`devices/${device.mac}`)
-                            .get();
-                        return new Device(
-                            device.mac,
-                            device.name,
-                            fetchedDevice.val(),
-                        );
-                    }),
-                );
-                clients.push(client);
-            }),
-        );
-        return clients;
-    }
+        if (searchText.trim() !== '') {
+            if (filters.searchFields?.length > 0) {
+                const searchConditions = filters.searchFields
+                    .map((field) => {
+                        return `LOWER(client.${field}) LIKE LOWER(:searchText)`;
+                    })
+                    .join(' OR ');
 
-    async createClient(request: ClientCreateDto, companyId: string) {
-        const newClient = new ClientEntity({
-            ...request,
-            company: { id: companyId } as CompanyEntity,
-        });
-        return this.clientRepository.save(newClient);
+                queryBuilder.andWhere(`(${searchConditions})`, {
+                    searchText: `%${searchText}%`,
+                });
+            } else {
+                queryBuilder.andWhere(
+                    'LOWER(client.name) LIKE LOWER(:searchText)',
+                    {
+                        searchText: `%${searchText}%`,
+                    },
+                );
+            }
+        }
+
+        queryBuilder.skip((page - 1) * pageSize).take(pageSize);
+
+        const [relations, total] = await queryBuilder.getManyAndCount();
+
+        const clients = relations.map((r) => r.client);
+
+        return {
+            total,
+            page,
+            pageSize,
+            data: clients,
+        };
     }
 }

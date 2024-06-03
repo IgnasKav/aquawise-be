@@ -1,21 +1,30 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
+import { ImageEntity } from 'src/images/entities/image.entity';
+import { ProductEntity } from 'src/products/entities/product.entity';
+import { CompanyClientRelationEntity } from './company-client-relation.entity';
 
 @Entity('company')
 export class CompanyEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ unique: true })
     name: string;
 
-    @Column()
+    @Column({ unique: true })
     code: string;
 
     @Column()
     phone: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
@@ -24,26 +33,20 @@ export class CompanyEntity {
     @Column({ nullable: true })
     brandColor: string;
 
-    @Column({ nullable: true })
-    logoUrl: string;
-
-    @Column({ nullable: true, unique: true })
-    companyRegistrationId: string;
+    @OneToMany(() => ImageEntity, (image) => image.company)
+    images?: ImageEntity[];
 
     @OneToMany(() => UserEntity, (user) => user.company)
-    users: UserEntity[];
+    users?: UserEntity[];
 
-    constructor(data?: Partial<CompanyEntity>) {
-        this.id = data?.id ?? '';
-        this.name = data?.name ?? '';
-        this.code = data?.code ?? '';
-        this.phone = data?.phone ?? '';
-        this.email = data?.email ?? '';
-        this.status = data?.status ?? CompanyStatus.ApplicationPending;
-        this.brandColor = data?.brandColor ?? null;
-        this.logoUrl = data?.logoUrl ?? null;
-        this.companyRegistrationId = data?.companyRegistrationId ?? null;
-    }
+    @OneToMany(() => ProductEntity, (product) => product.company)
+    products?: ProductEntity[];
+
+    @OneToMany(
+        () => CompanyClientRelationEntity,
+        (relation) => relation.company,
+    )
+    companyToClients?: CompanyClientRelationEntity[];
 }
 
 export enum CompanyStatus {

@@ -11,6 +11,7 @@ import { ClientsModule } from './clients/clients.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrdersModule } from './orders/orders.module';
 import { RouterModule } from '@nestjs/core';
+import { ImagesModule } from './images/images.module';
 
 @Module({
     imports: [
@@ -23,27 +24,11 @@ import { RouterModule } from '@nestjs/core';
         UsersModule,
         ProductsModule,
         CompaniesModule,
-        OrdersModule,
         ClientsModule,
+        OrdersModule,
         MailModule,
-        RouterModule.register([
-            {
-                path: 'companies',
-                module: CompaniesModule,
-                children: [
-                    {
-                        path: ':companyId/clients',
-                        module: ClientsModule,
-                        children: [
-                            {
-                                path: ':clientId/orders',
-                                module: OrdersModule,
-                            },
-                        ],
-                    },
-                ],
-            },
-        ]),
+        ImagesModule,
+        RouterModule.register([]),
     ],
     controllers: [],
     providers: [],

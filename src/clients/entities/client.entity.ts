@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CompanyEntity } from '../../companies/entities/company.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { CompanyClientRelationEntity } from 'src/companies/entities/company-client-relation.entity';
 
 @Entity('client')
 export class ClientEntity {
@@ -7,10 +7,10 @@ export class ClientEntity {
     id: string;
 
     @Column()
-    firstName: string;
+    email: string;
 
     @Column()
-    lastName: string;
+    name: string;
 
     @Column()
     phone: string;
@@ -18,15 +18,23 @@ export class ClientEntity {
     @Column()
     address: string;
 
-    @ManyToOne(() => CompanyEntity)
-    company: CompanyEntity;
+    @Column()
+    type: ClientType;
+
+    @OneToMany(
+        () => CompanyClientRelationEntity,
+        (relation) => relation.company,
+    )
+    clientToCompanies?: CompanyClientRelationEntity[];
 
     constructor(data?: Partial<ClientEntity>) {
         this.id = data?.id ?? '';
-        this.firstName = data?.firstName;
-        this.lastName = data?.lastName;
+        this.email = data?.email;
+        this.name = data?.name;
         this.phone = data?.phone;
         this.address = data?.address;
-        this.company = data?.company ?? new CompanyEntity();
+        this.type = data?.type;
     }
 }
+
+export type ClientType = 'person' | 'company';

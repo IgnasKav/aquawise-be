@@ -1,6 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToOne,
+    PrimaryGeneratedColumn,
+    Unique,
+} from 'typeorm';
 import { UserDto } from '../dto/user.dto';
 import { CompanyEntity } from '../../companies/entities/company.entity';
+import { UserFiltersEntity } from './user-filter.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -13,29 +22,35 @@ export class UserEntity {
     @Column()
     lastName: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
     phone: string;
 
     @Column({ nullable: true })
-    password: string;
+    password?: string;
 
     @Column({
         unique: true,
         nullable: true,
     })
-    userRegistrationId: string;
-
-    @Column()
-    isRegistered: boolean;
+    userRegistrationId?: string;
 
     @Column()
     role: UserRole;
 
-    @ManyToOne(() => CompanyEntity, { nullable: true })
-    company?: CompanyEntity;
+    @Column()
+    companyId: string;
+
+    @ManyToOne(() => CompanyEntity, (company) => company.users)
+    company: CompanyEntity;
+
+    @OneToOne(() => UserFiltersEntity, (filters) => filters.user, {
+        nullable: true,
+    })
+    @JoinColumn()
+    filters: UserFiltersEntity;
 
     constructor(data?: Partial<UserEntity>) {
         this.id = data?.id ?? '';
@@ -45,8 +60,7 @@ export class UserEntity {
         this.phone = data?.phone ?? '';
         this.password = data?.password ?? '';
         this.userRegistrationId = data?.userRegistrationId;
-        this.isRegistered = data?.isRegistered ?? false;
-        this.role = data?.role ?? UserRole.User;
+        this.role = data?.role ?? 'user';
         this.company = data?.company;
     }
 
@@ -63,8 +77,4 @@ export class UserEntity {
     }
 }
 
-export enum UserRole {
-    User = 'User',
-    Admin = 'Admin',
-    Support = 'Support',
-}
+export type UserRole = 'user' | 'admin' | 'support';

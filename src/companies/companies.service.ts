@@ -1,124 +1,119 @@
 import {
     BadRequestException,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CompanyEntity, CompanyStatus } from './entities/company.entity';
-import { CompanyUpdateDto } from './dto/companyUpdate.dto';
-import { CompanyCreateDto } from './dto/companyCreate.dto';
+import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { v4 as uuid } from 'uuid';
-import { MailService } from '../mail/mail.service';
+import { IMailService } from 'src/mail/models/IMailService';
+import { UserEntity } from 'src/user/entities/user.entity';
+import transactionRunner from 'src/common/db-transaction-runner';
 
 @Injectable()
 export class CompaniesService {
     constructor(
         @InjectRepository(CompanyEntity)
-        private readonly companyRepository: Repository<CompanyEntity>,
-        private mailService: MailService,
+        private readonly companyRepo: Repository<CompanyEntity>,
+        @InjectRepository(UserEntity)
+        private readonly userRepo: Repository<UserEntity>,
+        @Inject('IMailService')
+        private mailService: IMailService,
+        private dataSource: DataSource,
     ) {}
 
-    async getCompanyById(id: string) {
-        const company = await this.companyRepository.findOne({
-            where: { id: id },
-            relations: { users: true },
+    async applyForCompanyAccount(request: CompanyCreateRequest) {
+        const userWithSameEmail = await this.userRepo.findOne({
+            where: { email: request.email },
         });
 
-        if (!company) {
-            throw new NotFoundException(`Company with id: ${id} not found`);
-        }
-
-        return company;
-    }
-
-    async getByRegistrationId(registrationId: string) {
-        const company = await this.companyRepository.findOne({
-            where: { companyRegistrationId: registrationId },
-        });
-
-        if (!company) {
-            throw new NotFoundException(
-                `Company with registrationId: ${registrationId} not found`,
-            );
-        }
-
-        return company;
-    }
-
-    async confirmApplication(registrationId: string) {
-        const company = await this.companyRepository.findOne({
-            where: { companyRegistrationId: registrationId },
-        });
-
-        if (company == null) {
+        if (userWithSameEmail) {
             throw new BadRequestException(
-                `No company found for registrationId: ${registrationId}`,
+                `User with email: ${request.email} already exists`,
             );
         }
 
-        const updatedCompany = await this.companyRepository.preload({
-            id: company.id,
-            status: CompanyStatus.Confirmed,
-        });
-
-        await this.mailService.sendApplicationConfirmation(company);
-        return this.companyRepository.save(updatedCompany);
-    }
-
-    async createCompany(request: CompanyCreateDto) {
-        const existingCompany = await this.companyRepository.findOne({
-            where: [{ name: request.name }, { code: request.code }],
+        const existingCompany = await this.companyRepo.findOne({
+            where: [
+                { name: request.name },
+                { code: request.code },
+                { email: request.email },
+            ],
         });
 
         if (existingCompany) {
             if (existingCompany.name === request.name) {
                 throw new BadRequestException(
-                    `Another company with name: ${request.name} exists`,
+                    `Another company with name: ${request.name} already exists`,
                 );
             }
 
             if (existingCompany.code === request.code) {
                 throw new BadRequestException(
-                    `Another company with code: ${request.code} exists`,
+                    `Another company with code: ${request.code} already exists`,
+                );
+            }
+
+            if (existingCompany.email === request.email) {
+                throw new BadRequestException(
+                    `Another company with email: ${request.email} already exists`,
                 );
             }
         }
 
-        const company = this.companyRepository.create({
+        const company = this.companyRepo.create({
             ...request,
             id: uuid(),
-            companyRegistrationId: uuid(),
             status: CompanyStatus.ApplicationPending,
         });
 
-        await this.companyRepository.save(company);
+        await this.companyRepo.save(company);
         return company;
     }
 
-    async updateCompany(id: string, request: CompanyUpdateDto) {
-        if (request.image) {
-            const imageUrl = `${process.env.BE_URL}/${request.image.filename}`;
-        }
+    // support
 
-        const company = await this.companyRepository.preload({
-            id: id,
-            brandColor: request.brandColor,
-            ...request,
+    async confirmApplication(id: string) {
+        const company = await this.companyRepo.findOne({
+            where: { id: id },
         });
 
         if (!company) {
             throw new NotFoundException(`Company with id: ${id} not found`);
         }
-        return this.companyRepository.save(company);
-    }
 
-    async deleteCompany(id: string) {
-        const company = await this.getCompanyById(id);
-        //return this.companyRepository.delete();
+        if (company.status === CompanyStatus.Confirmed) {
+            return;
+        }
+
+        company.status = CompanyStatus.Confirmed;
+
+        const adminUser = await this.userRepo.create({
+            id: uuid(),
+            email: company.email,
+            firstName: `${company.name} Admin`,
+            lastName: '',
+            password: '',
+            role: 'admin',
+            company: company,
+            userRegistrationId: uuid(),
+        });
+
+        await transactionRunner(this.dataSource, async (queryRunner) => {
+            await queryRunner.manager.save(company);
+            await queryRunner.manager.save(adminUser);
+
+            await this.mailService.sendApplicationConfirmation(
+                company,
+                adminUser,
+            );
+        });
     }
 
     async getAllCompanies() {
-        return await this.companyRepository.find();
+        return await this.companyRepo.find();
     }
 }

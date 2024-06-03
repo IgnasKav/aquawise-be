@@ -7,7 +7,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { OrderItemEntity } from './orderItem.entity';
 import { ClientEntity } from '../../clients/entities/client.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 
@@ -33,9 +32,6 @@ export class OrderEntity {
 
     @ManyToOne(() => ClientEntity)
     client: ClientEntity;
-
-    @OneToMany(() => OrderItemEntity, (item) => item.order, { cascade: true })
-    items: OrderItemEntity[];
 }
 
 export enum OrderStatus {

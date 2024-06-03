@@ -33,16 +33,20 @@ export class SendGridMailService implements IMailService {
         await sgMail.send(msg);
     }
 
-    async sendApplicationConfirmation(company: CompanyEntity) {
-        const url = `${process.env.FE_URL}/auth/register/?companyRegistrationId=${company.companyRegistrationId}`;
+    async sendApplicationConfirmation(
+        company: CompanyEntity,
+        user: UserEntity,
+    ) {
+        const invitationLink = `${process.env.FE_URL}/auth/register?registrationId=${user.id}`;
 
         const html = this.getHtmlTemplate('applicationConfirmation', {
+            appName: 'Aquawise',
             companyName: company.name,
-            url,
+            invitationLink,
         });
 
         const msg = {
-            to: company.email,
+            to: user.email,
             from: 'aquawise@devbroth.com',
             subject: 'Your application has been approved!',
             text: 'Your application has been approved!',
