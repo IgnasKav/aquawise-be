@@ -13,7 +13,7 @@ import { CompanyCreateRequest } from './models/CompanyCreateRequest';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorators/role.decorator';
 
-@Controller('')
+@Controller('companies')
 export class CompaniesController {
     constructor(private readonly companiesService: CompaniesService) {}
 

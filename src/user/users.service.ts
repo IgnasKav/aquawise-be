@@ -38,7 +38,7 @@ export class UsersService {
     async getUserFilters(
         userId: string,
         scope: UserFilterScope,
-    ): Promise<object> {
+    ): Promise<object | null> {
         const userFiltersRepo =
             this.dataSource.getRepository(UserFiltersEntity);
 
@@ -48,6 +48,8 @@ export class UsersService {
                 scope,
             },
         });
+
+        if (!resp) return null;
 
         const filters = JSON.parse(resp.filterJSON);
 
